@@ -39,7 +39,7 @@ const Header = () => {
         <div className="header-inner"> {/* 중앙 정렬을 위한 이너 박스 추가 */}
           <ul className="header-nav-list">
             <li className="header-nav-item">
-              <Link to="/explore" className="header-nav-link">탐색 및 지도</Link>
+              <Link to="/explore" className="header-nav-link">퀘스트 목록</Link>
             </li>
             <li className="header-nav-item">
               <Link to="/quest" className="header-nav-link">내 퀘스트</Link>

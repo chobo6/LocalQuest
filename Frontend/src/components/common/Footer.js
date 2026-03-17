@@ -18,7 +18,8 @@ const Footer = () => {
     alliance: "/business/alliance",
     faq: "/support/faq",
     notice: "/support/notice",
-    contact: "/support/contact"
+    contact: "/support/contact",
+    support: "/support"
   };
 
   // --- [2. 모달 텍스트 내용] ---
@@ -95,13 +96,14 @@ const Footer = () => {
               </ul>
             </div>
             <div className="footer-menu-col">
-              <h4 className="footer-menu-title">고객지원</h4>
-              <ul className="footer-menu-list">
-                <li><Link to={paths.faq} className="footer-link">자주 묻는 질문</Link></li>
-                <li><Link to={paths.notice} className="footer-link">공지사항</Link></li>
-                <li><Link to={paths.contact} className="footer-link">1:1 문의</Link></li>
-              </ul>
-            </div>
+  <h4 className="footer-menu-title">고객지원</h4>
+  <ul className="footer-menu-list">
+    {/* state를 통해 어떤 탭을 열지 전달합니다 */}
+    <li><Link to={paths.support} state={{ tab: 'notice' }} className="footer-link">공지사항</Link></li>
+    <li><Link to={paths.support} state={{ tab: 'faq' }} className="footer-link">자주 묻는 질문</Link></li>
+    <li><Link to={paths.support} state={{ tab: 'contact' }} className="footer-link">1:1 문의</Link></li>
+  </ul>
+</div>
           </div>
         </div>
 
