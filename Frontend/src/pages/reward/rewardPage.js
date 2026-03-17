@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import "./rewardPage.css";
 
 const CURRENT_LEVEL = 12;
-const TOTAL_XP = 8420;
 const NEXT_LEVEL_PROGRESS = 72;
 const NEXT_LEVEL_REMAIN_XP = 580;
 const INITIAL_POINTS = 3200;
@@ -10,7 +9,6 @@ const INITIAL_POINTS = 3200;
 const INITIAL_WALLET = [
   {
     id: "w-1",
-    emoji: "☕",
     name: "아메리카노 1,500원 할인",
     store: "푸른밤 카페",
     expire: "5일 남음",
@@ -18,7 +16,6 @@ const INITIAL_WALLET = [
   },
   {
     id: "w-2",
-    emoji: "🍜",
     name: "사이드 메뉴 무료",
     store: "마루 국수 성수점",
     expire: "2일 남음",
@@ -26,84 +23,68 @@ const INITIAL_WALLET = [
   },
 ];
 
-const SHOP_ITEMS = [
+// LQ_REWARD_ITEM 테이블 형태의 더미 데이터
+const LQ_REWARD_ITEM_MOCK = [
   {
-    id: 1,
-    theme: "rose",
-    emoji: "☕",
-    name: "아메리카노 1,500원 할인",
-    store: "푸른밤 카페 성수점",
-    expireText: "유효기간 구매일로부터 7일",
-    price: 800,
-    tags: ["cafe"],
+    REWARD_ITEM_ID: 1,
+    NAME: "제휴 카페 아메리카노 교환권",
+    DESCRIPTION: "제휴 카페에서 즉시 사용할 수 있는 아메리카노 1잔 교환권",
+    PRICE_POINT: 1200,
+    STOCK: 95,
+    STATUS: "ON_SALE",
+    CREATED_AT: "2026-03-12",
   },
   {
-    id: 2,
-    theme: "orange",
-    emoji: "🍜",
-    name: "국물 떡볶이 사이드 무료",
-    store: "마루 국수 성수점",
-    expireText: "유효기간 구매일로부터 3일",
-    price: 600,
-    tags: ["food", "limited"],
-    limited: {
-      label: "🔥 한정 12개",
-      remain: "9개 남음",
-      stockPercent: 75,
-    },
+    REWARD_ITEM_ID: 2,
+    NAME: "편의점 모바일 금액권 1,000원",
+    DESCRIPTION: "전국 편의점에서 바로 사용하는 모바일 금액권",
+    PRICE_POINT: 900,
+    STOCK: 130,
+    STATUS: "ON_SALE",
+    CREATED_AT: "2026-03-14",
   },
   {
-    id: 3,
-    theme: "sky",
-    emoji: "🧋",
-    name: "버블티 음료 교환권",
-    store: "성수 버블 라운지 전점",
-    expireText: "유효기간 구매일로부터 14일",
-    price: 3500,
-    tags: ["cafe"],
-    shortageHint: "퀘스트 3회 완료 시 구매 가능",
+    REWARD_ITEM_ID: 3,
+    NAME: "로컬 식당 사이드 메뉴 무료 쿠폰",
+    DESCRIPTION: "제휴 로컬 식당 방문 시 사이드 메뉴 1종 무료 제공",
+    PRICE_POINT: 1500,
+    STOCK: 35,
+    STATUS: "ON_SALE",
+    CREATED_AT: "2026-03-13",
   },
   {
-    id: 4,
-    theme: "amber",
-    emoji: "🎟️",
-    name: "전 제휴 매장 5% 상시 할인",
-    store: "로컬 퀘스트 전 파트너 매장",
-    expireText: "30일 구독권",
-    price: null,
-    tags: ["cafe", "limited"],
-    locked: {
-      gradeLabel: "🚩 가이드 전용",
-      requiredLevel: 16,
-      unlockText: "Lv.16 가이드 달성 시 해금",
-    },
+    REWARD_ITEM_ID: 4,
+    NAME: "지역 편집샵/독립서점 할인권",
+    DESCRIPTION: "천안 지역 편집샵 및 독립서점에서 사용 가능한 10% 할인권",
+    PRICE_POINT: 2000,
+    STOCK: 0,
+    STATUS: "SOLD_OUT",
+    CREATED_AT: "2026-03-10",
   },
   {
-    id: 5,
-    theme: "emerald",
-    emoji: "🍚",
-    name: "한강뷰 국밥 공깃밥 무료",
-    store: "여의도 한강뷰 국밥집",
-    expireText: "유효기간 구매일로부터 14일",
-    price: 1200,
-    tags: ["food"],
-    routeTag: "🏃 러닝 코스 인근",
+    REWARD_ITEM_ID: 5,
+    NAME: "경험치 2배 부스터 (1시간)",
+    DESCRIPTION: "사용 후 1시간 동안 퀘스트 완료 XP 2배 적용",
+    PRICE_POINT: 1800,
+    STOCK: 60,
+    STATUS: "ON_SALE",
+    CREATED_AT: "2026-03-15",
   },
   {
-    id: 6,
-    theme: "purple",
-    emoji: "👜",
-    name: "시즌 1 리미티드 에코백",
-    store: "로컬 퀘스트 공식 굿즈",
-    expireText: "시즌 한정 · 30개 수량",
-    price: null,
-    tags: ["limited"],
-    locked: {
-      gradeLabel: "🎖️ 챌린저 전용",
-      requiredLevel: 31,
-      unlockText: "Lv.31 챌린저 달성 시 해금",
-    },
+    REWARD_ITEM_ID: 6,
+    NAME: "한정판 프로필 뱃지",
+    DESCRIPTION: "시즌 한정 커스텀 프로필 뱃지 지급",
+    PRICE_POINT: 2500,
+    STOCK: 20,
+    STATUS: "ON_SALE",
+    CREATED_AT: "2026-03-11",
   },
+];
+
+const STATUS_TABS = [
+  { id: "ALL", label: "전체" },
+  { id: "ON_SALE", label: "판매중" },
+  { id: "SOLD_OUT", label: "품절" },
 ];
 
 const RANKING_TOP3 = [
@@ -122,36 +103,35 @@ const WEEKLY_STATS = {
   weeklyProgress: 88,
 };
 
-const CATEGORY_TABS = [
-  { id: "all", label: "전체" },
-  { id: "cafe", label: "☕ 카페" },
-  { id: "food", label: "🍜 식당" },
-  { id: "limited", label: "🔥 한정" },
-];
-
 function formatPoint(value) {
   return `${value.toLocaleString()} P`;
 }
 
-function getSortPrice(item) {
-  if (typeof item.price === "number") {
-    return item.price;
-  }
-  return Number.MAX_SAFE_INTEGER;
+function getRewardTheme(rewardItemId) {
+  const themes = ["rose", "orange", "sky", "emerald", "amber", "purple"];
+  return themes[(rewardItemId - 1) % themes.length];
+}
+
+function isOnSaleItem(item) {
+  return item.STATUS === "ON_SALE" && item.STOCK > 0;
+}
+
+function getStockPercent(stock) {
+  return Math.min(100, Math.max(6, stock));
 }
 
 function RewardPage() {
   const [points, setPoints] = useState(INITIAL_POINTS);
   const [wallet, setWallet] = useState(INITIAL_WALLET);
-  const [category, setCategory] = useState("all");
-  const [sortType, setSortType] = useState("default");
+  const [rewardItems, setRewardItems] = useState(LQ_REWARD_ITEM_MOCK);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [sortType, setSortType] = useState("latest");
   const [pendingItem, setPendingItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [xpAnimated, setXpAnimated] = useState(false);
   const [weeklyAnimated, setWeeklyAnimated] = useState(false);
-  const [purchasedIds, setPurchasedIds] = useState([]);
 
   useEffect(() => {
     const xpTimer = window.setTimeout(() => setXpAnimated(true), 400);
@@ -169,23 +149,25 @@ function RewardPage() {
   }, [showToast]);
 
   const visibleItems = useMemo(() => {
-    const filtered = SHOP_ITEMS.filter((item) => category === "all" || item.tags.includes(category));
+    const filtered = rewardItems.filter((item) => {
+      if (statusFilter === "ALL") {
+        return item.STATUS !== "HIDDEN";
+      }
+      return item.STATUS === statusFilter;
+    });
 
     if (sortType === "low") {
-      return [...filtered].sort((a, b) => getSortPrice(a) - getSortPrice(b));
+      return [...filtered].sort((a, b) => a.PRICE_POINT - b.PRICE_POINT);
     }
     if (sortType === "high") {
-      return [...filtered].sort((a, b) => getSortPrice(b) - getSortPrice(a));
+      return [...filtered].sort((a, b) => b.PRICE_POINT - a.PRICE_POINT);
     }
 
-    return filtered;
-  }, [category, sortType]);
+    return [...filtered].sort((a, b) => new Date(b.CREATED_AT) - new Date(a.CREATED_AT));
+  }, [rewardItems, statusFilter, sortType]);
 
   const canPurchase = (item) => {
-    const isLocked = item.locked && CURRENT_LEVEL < item.locked.requiredLevel;
-    const isPurchased = purchasedIds.includes(item.id);
-    const hasPrice = typeof item.price === "number";
-    return !isLocked && !isPurchased && hasPrice && points >= item.price;
+    return isOnSaleItem(item) && points >= item.PRICE_POINT;
   };
 
   const openPurchaseModal = (item) => {
@@ -205,23 +187,35 @@ function RewardPage() {
   };
 
   const confirmPurchase = () => {
-    if (!pendingItem || typeof pendingItem.price !== "number") return;
+    if (!pendingItem) return;
 
-    setPoints((prev) => prev - pendingItem.price);
-    setPurchasedIds((prev) => (prev.includes(pendingItem.id) ? prev : [...prev, pendingItem.id]));
+    setPoints((prev) => prev - pendingItem.PRICE_POINT);
+    setRewardItems((prev) =>
+      prev.map((item) => {
+        if (item.REWARD_ITEM_ID !== pendingItem.REWARD_ITEM_ID) {
+          return item;
+        }
+        const nextStock = Math.max(item.STOCK - 1, 0);
+        return {
+          ...item,
+          STOCK: nextStock,
+          STATUS: nextStock > 0 ? "ON_SALE" : "SOLD_OUT",
+        };
+      }),
+    );
+
     setWallet((prev) => [
       ...prev,
       {
-        id: `w-${Date.now()}-${pendingItem.id}`,
-        emoji: pendingItem.emoji,
-        name: pendingItem.name,
-        store: pendingItem.store,
+        id: `w-${Date.now()}-${pendingItem.REWARD_ITEM_ID}`,
+        name: pendingItem.NAME,
+        store: "리워드 상점 교환",
         expire: "7일 남음",
         urgent: false,
       },
     ]);
 
-    showToastMessage(`🎉 ${pendingItem.name} 쿠폰이 보관함에 추가됐어요!`);
+    showToastMessage(`🎉 ${pendingItem.NAME} 교환이 완료됐어요!`);
     closeModal();
   };
 
@@ -262,7 +256,7 @@ function RewardPage() {
             <article className="reward-card reward-level-card">
               <div className="reward-level-label-row">
                 <p>나의 등급</p>
-                <p>누적 XP</p>
+                <p>보유 포인트</p>
               </div>
 
               <div className="reward-level-summary-row">
@@ -270,7 +264,7 @@ function RewardPage() {
                   <strong className="reward-level-number">LV.{CURRENT_LEVEL}</strong>
                   <span className="reward-grade-pill reward-grade-walker">🚶 워커</span>
                 </div>
-                <strong className="reward-total-xp">{TOTAL_XP.toLocaleString()}</strong>
+                <strong className="reward-total-xp">{points.toLocaleString()}P</strong>
               </div>
 
               <div>
@@ -357,7 +351,7 @@ function RewardPage() {
                       <span className="reward-ticket-notch reward-is-top" aria-hidden="true" />
                       <span className="reward-ticket-notch reward-is-bottom" aria-hidden="true" />
 
-                      <div className={`reward-ticket-side ${coupon.urgent ? "reward-is-urgent" : ""}`}>{coupon.emoji}</div>
+                      <div className={`reward-ticket-side ${coupon.urgent ? "reward-is-urgent" : ""}`}>쿠폰</div>
 
                       <div className="reward-ticket-content">
                         <div className="reward-ticket-title-row">
@@ -372,7 +366,7 @@ function RewardPage() {
                 </div>
               ) : (
                 <div className="reward-wallet-empty">
-                  <p>🎟️</p>
+                  <div className="reward-wallet-empty-label">쿠폰함</div>
                   <strong>보유한 쿠폰이 없어요</strong>
                   <span>상점에서 구매해보세요</span>
                 </div>
@@ -457,23 +451,18 @@ function RewardPage() {
           <div className="reward-shop-head">
             <div className="reward-shop-title-wrap">
               <h2>쿠폰 상점</h2>
-              <div className="reward-point-chip">
-                <span aria-hidden="true">💰</span>
-                <strong>{points.toLocaleString()}</strong>
-                <small>P 보유</small>
-              </div>
             </div>
 
             <div className="reward-shop-controls">
-              <div className="reward-tab-list" role="tablist" aria-label="쿠폰 카테고리">
-                {CATEGORY_TABS.map((tab) => (
+              <div className="reward-tab-list" role="tablist" aria-label="리워드 상태 필터">
+                {STATUS_TABS.map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
                     role="tab"
-                    aria-selected={category === tab.id}
-                    className={`reward-tab-button ${category === tab.id ? "reward-is-active" : ""}`}
-                    onClick={() => setCategory(tab.id)}
+                    aria-selected={statusFilter === tab.id}
+                    className={`reward-tab-button ${statusFilter === tab.id ? "reward-is-active" : ""}`}
+                    onClick={() => setStatusFilter(tab.id)}
                   >
                     {tab.label}
                   </button>
@@ -483,7 +472,7 @@ function RewardPage() {
               <label className="reward-select-wrap">
                 <span className="reward-sr-only">정렬 기준</span>
                 <select value={sortType} onChange={(e) => setSortType(e.target.value)}>
-                  <option value="default">추천순</option>
+                  <option value="latest">최신 등록순</option>
                   <option value="low">낮은 포인트</option>
                   <option value="high">높은 포인트</option>
                 </select>
@@ -494,81 +483,68 @@ function RewardPage() {
           {visibleItems.length > 0 ? (
             <div className="reward-shop-grid">
               {visibleItems.map((item) => {
-                const isLocked = item.locked && CURRENT_LEVEL < item.locked.requiredLevel;
-                const isPurchased = purchasedIds.includes(item.id);
-                const shortage = typeof item.price === "number" ? item.price - points : 0;
+                const shortage = item.PRICE_POINT - points;
                 const canBuy = canPurchase(item);
+                const stockPercent = getStockPercent(item.STOCK);
+                const itemTheme = getRewardTheme(item.REWARD_ITEM_ID);
 
                 return (
                   <article
-                    key={item.id}
-                    className={`reward-shop-card reward-shop-card-theme-${item.theme} ${
-                      isLocked ? "reward-is-locked" : ""
+                    key={item.REWARD_ITEM_ID}
+                    className={`reward-shop-card reward-shop-card-theme-${itemTheme} ${
+                      item.STATUS !== "ON_SALE" ? "reward-is-locked" : ""
                     }`}
                   >
                     <div className="reward-shop-stripe" />
 
                     <div className="reward-shop-card-body">
-                      {item.limited ? <span className="reward-limited-badge">{item.limited.label}</span> : null}
+                      {item.STATUS === "SOLD_OUT" ? <span className="reward-limited-badge">품절</span> : null}
 
-                      <div className="reward-shop-card-top">
-                        <div className="reward-shop-icon-wrap">{item.emoji}</div>
+                      <div className="reward-shop-card-top reward-is-single">
                         <div className="reward-shop-price-wrap">
-                          {typeof item.price === "number" ? (
-                            <>
-                              <strong>{formatPoint(item.price)}</strong>
-                              <p>보유 {formatPoint(points)}</p>
-                            </>
-                          ) : (
-                            <span className="reward-grade-lock-chip">{item.locked?.gradeLabel}</span>
-                          )}
+                          <strong>{formatPoint(item.PRICE_POINT)}</strong>
+                          <p>재고 {item.STOCK.toLocaleString()}개</p>
                         </div>
                       </div>
 
-                      <h3>{item.name}</h3>
-                      <p className="reward-shop-store">{item.store}</p>
-                      <p className="reward-shop-expire">{item.expireText}</p>
+                      <h3>{item.NAME}</h3>
+                      <p className="reward-shop-store">등록일 {item.CREATED_AT}</p>
+                      <p className="reward-shop-expire">{item.DESCRIPTION || "상품 설명이 준비 중입니다."}</p>
 
-                      {item.limited ? (
-                        <div className="reward-stock-wrap">
-                          <div className="reward-stock-bar">
-                            <div className="reward-stock-fill" style={{ width: `${item.limited.stockPercent}%` }} />
-                          </div>
-                          <p>{item.limited.remain}</p>
+                      <div className="reward-stock-wrap">
+                        <div className="reward-stock-bar">
+                          <div className="reward-stock-fill" style={{ width: `${stockPercent}%` }} />
                         </div>
-                      ) : null}
+                        <p>
+                          {item.STATUS === "ON_SALE"
+                            ? `판매중 · 재고 ${item.STOCK.toLocaleString()}개`
+                            : item.STATUS === "SOLD_OUT"
+                              ? "품절"
+                              : "비공개"}
+                        </p>
+                      </div>
 
-                      {item.shortageHint && shortage > 0 ? (
-                        <div className="reward-shortage-hint">⚡ {item.shortageHint}</div>
+                      {shortage > 0 && item.STATUS === "ON_SALE" ? (
+                        <div className="reward-shortage-hint">⚡ {shortage.toLocaleString()}P가 더 필요해요</div>
                       ) : null}
-
-                      {item.routeTag ? <span className="reward-route-tag">{item.routeTag}</span> : null}
 
                       <button
                         type="button"
                         className={`reward-buy-button ${
-                          isPurchased ? "reward-is-complete" : !canBuy ? "reward-is-disabled" : ""
+                          !canBuy ? "reward-is-disabled" : ""
                         }`}
                         onClick={() => openPurchaseModal(item)}
                         disabled={!canBuy}
                       >
-                        {isPurchased
-                          ? "✓ 구매 완료"
-                          : typeof item.price !== "number"
-                            ? "등급 잠금"
+                        {item.STATUS === "HIDDEN"
+                          ? "비공개 상품"
+                          : item.STATUS === "SOLD_OUT" || item.STOCK <= 0
+                            ? "품절"
                             : shortage > 0
                               ? `${shortage.toLocaleString()}P 부족`
-                              : `${item.price.toLocaleString()}P로 구매하기`}
+                              : "교환하기"}
                       </button>
                     </div>
-
-                    {isLocked ? (
-                      <div className="reward-lock-overlay">
-                        <p>🔒</p>
-                        <strong>{item.locked?.unlockText}</strong>
-                        <span>현재 Lv.{CURRENT_LEVEL} → {item.locked.requiredLevel - CURRENT_LEVEL}레벨 남음</span>
-                      </div>
-                    ) : null}
                   </article>
                 );
               })}
@@ -584,10 +560,9 @@ function RewardPage() {
 
       <div className={`reward-modal-overlay ${isModalOpen ? "reward-is-open" : ""}`} onClick={closeModal}>
         <section className="reward-modal-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-          <div className="reward-modal-head">
-            <div className="reward-modal-emoji">{pendingItem?.emoji ?? "☕"}</div>
-            <h3>{pendingItem?.name ?? ""}</h3>
-            <p>{pendingItem?.store ?? ""}</p>
+          <div className="reward-modal-head reward-no-emoji">
+            <h3>{pendingItem?.NAME ?? ""}</h3>
+            <p>{pendingItem ? `재고 ${pendingItem.STOCK.toLocaleString()}개` : ""}</p>
           </div>
 
           <div className="reward-modal-summary">
@@ -598,13 +573,13 @@ function RewardPage() {
             <div>
               <span>차감 포인트</span>
               <strong className="reward-is-minus">
-                {pendingItem?.price ? `- ${formatPoint(pendingItem.price)}` : "-"}
+                {pendingItem ? `- ${formatPoint(pendingItem.PRICE_POINT)}` : "-"}
               </strong>
             </div>
             <div className="reward-is-total">
               <span>구매 후 잔액</span>
               <strong>
-                {pendingItem?.price ? formatPoint(Math.max(points - pendingItem.price, 0)) : formatPoint(points)}
+                {pendingItem ? formatPoint(Math.max(points - pendingItem.PRICE_POINT, 0)) : formatPoint(points)}
               </strong>
             </div>
           </div>
