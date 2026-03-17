@@ -1,0 +1,98 @@
+/* Login.css */
+
+/* 화면 전체 중앙 정렬 */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+    font-family: 'Arial', sans-serif;
+}
+
+/* 로그인 카드 (Input과 Button을 감싸는 컨테이너) */
+.login-form {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+/* 페이지 제목 */
+.login-title {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 아이디 저장 체크박스 영역 */
+.login-options {
+    margin-bottom: 20px;
+}
+
+.remember-login-id {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+}
+
+.remember-login-id input {
+    margin-right: 8px;
+}
+
+/* 하단 링크 메뉴 (아이디/비밀번호 찾기, 회원가입) */
+.login-find {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.login-find button {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none; /* 밑줄 제거 (취향에 따라 선택) */
+    transition: color 0.2s;
+}
+
+.login-find button:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* 소셜 로그인 섹션 */
+.social-login {
+    margin-top: 30px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.social-login p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+/* 소셜 로그인 양옆에 선 긋기 (디자인 요소) */
+.social-login p::before,
+.social-login p::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+    margin: 0 10px;
+}
