@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md'; 
-import '../../styles/Header.css';
+import './Header.css';
 
 const Header = () => {
   const [userRole, setUserRole] = useState('GUEST'); 
