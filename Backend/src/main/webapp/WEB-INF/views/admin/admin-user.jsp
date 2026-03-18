@@ -51,38 +51,43 @@
 					<td class="adm-u-bold">${user.userLoginId}</td>
 					<td>${user.name}</td>
 					<td>${user.nickname}</td>
-					<td>
-						<%-- admin-user.jsp 내 select 태그 --%> <select
-						class="adm-u-table-select"
+					<td><select class="adm-u-table-select"
 						onchange="updateRole(${user.userId}, this.value)"
-						${user.userId == 1 ? 'disabled' : ''}>
-							<%-- 1번이면 작동 안 함 --%>
+						<%-- 1번 마스터이거나(OR) 상태가 정지(WITHDRAWN)인 경우 비활성화 --%>
+            ${(user.userId==
+						1 || user.status=='WITHDRAWN') ? 'disabled' : ''}>
+
 							<option value="USER" ${user.role == 'USER' ? 'selected' : ''}>일반</option>
 							<option value="BUSINESS"
 								${user.role == 'BUSINESS' ? 'selected' : ''}>비즈니스</option>
 							<option value="ADMIN" ${user.role == 'ADMIN' ? 'selected' : ''}>관리자</option>
-					</select> <c:if test="${user.userId == 1}">
-							<small style="display: block; color: #7239ea; font-size: 10px;">Master</small>
-						</c:if>
-					</td>
+					</select> <%-- 안내 문구 추가 (선택사항) --%> <c:choose>
+							<c:when test="${user.userId == 1}">
+								<small style="display: block; color: #7239ea; font-size: 10px;">Master</small>
+							</c:when>
+							<c:when test="${user.status == 'WITHDRAWN'}">
+								<small style="display: block; color: #ff4d4f; font-size: 10px;">정지된
+									회원</small>
+							</c:when>
+						</c:choose></td>
 					<td><span class="adm-u-badge ${user.status}">${user.status}</span>
 					</td>
 					<td class="adm-u-date">${user.createdAt}</td>
 					<td><c:choose>
-							<%-- 상태가 정지(WITHDRAWN)인 경우: 활성화 버튼 노출 --%>
+							<%-- 정지 상태일 때 -> 활성화 버튼 --%>
 							<c:when test="${user.status == 'WITHDRAWN'}">
-								<button class="adm-u-btn-active"
-									onclick="updateStatus(${user.userId}, 'ACTIVE')"
-									style="background-color: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-									활성화</button>
+								<button class="adm-u-btn-activate"
+									onclick="updateStatus(${user.userId}, 'ACTIVE')">활성화</button>
 							</c:when>
 
-							<%-- 상태가 정상(ACTIVE)인 경우: 정지 버튼 노출 (마스터 제외) --%>
+							<%-- 정상 상태일 때 -> 정지 버튼 --%>
 							<c:otherwise>
-								<button class="adm-u-btn-stop"
-									onclick="updateStatus(${user.userId}, 'WITHDRAWN')"
-									${user.userId == 1 ? 'style="display:none;"' : ''}>정지
-								</button>
+								<c:if test="${user.userId != 1}">
+									<%-- 마스터는 버튼 아예 안나오게 --%>
+									<button class="adm-u-btn-stop"
+										onclick="updateStatus(${user.userId}, 'WITHDRAWN')">
+										정지</button>
+								</c:if>
 							</c:otherwise>
 						</c:choose></td>
 				</tr>

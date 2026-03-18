@@ -127,3 +127,19 @@
     background: #f1416c;
     color: #fff;
 }
+
+/* 활성화 버튼 (새로 추가) */
+.adm-u-btn-activate {
+    background: transparent;
+    border: 1px solid #50CD89;
+    color: #50CD89;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.adm-u-btn-activate:hover {
+    background-color: #52c41a; /* 호버 시 초록색 채우기 */
+    color: white;
+}
