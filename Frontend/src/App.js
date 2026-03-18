@@ -1,19 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Login from './pages/auth/login/Login';
 import SignUp from './pages/auth/signup/SignUp';
 import Terms from './pages/auth/signup/Terms';
+import MainPage from './pages/main/MainPage';
 
 function App() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={isAuthenticated ? <Navigate to="/main" replace /> : <Login />}
+        />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/terms" element={<Terms />} />
-        {/* 기본 경로 설정 */}
-        <Route path="/" element={<Login />} />
+        <Route
+          path="/main"
+          element={isAuthenticated ? <MainPage /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/"
+          element={<Navigate to={isAuthenticated ? "/main" : "/login"} replace />}
+        />
       </Routes>
     </Router>
   );

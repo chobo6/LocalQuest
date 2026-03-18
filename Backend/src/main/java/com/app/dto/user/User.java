@@ -6,17 +6,17 @@ import lombok.Data;
 
 @Data
 public class User {
-	int userId;
-	String userLoginId;
-	String name;
-	String email;
-	String password;
-	String nickname;
-	String birth;
-	String gender;
-	String role;
-	int exp;
-	int point;
-	String status;
-	LocalDateTime createAt;
+	private int userId;
+	private String userLoginId;
+	private String name;
+	private String email;
+	private String password;
+	private String nickname;
+	private String birth;
+	private String gender;
+	private String role;
+	private int exp;
+	private int point;
+	private String status;
+	private LocalDateTime createAt;
 }
