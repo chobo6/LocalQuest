@@ -87,13 +87,9 @@ const STATUS_TABS = [
   { id: "SOLD_OUT", label: "품절" },
 ];
 
-const RANKING_TOP3 = [
-  { rank: 1, icon: "🦁", name: "서울숲사자", xp: "12,450 XP", level: "LV.28" },
-  { rank: 2, icon: "☕", name: "에소빌런", xp: "11,200 XP", level: "LV.24" },
-  { rank: 3, icon: "🏃", name: "러닝크루장", xp: "9,800 XP", level: "LV.21" },
-];
-
-const MY_RANK = { rank: 42, icon: "🏃", name: "김철수 (나)", xp: "8,420 XP", level: "LV.12" };
+const RANKING_API_PATHS = [
+  "/api/rankings"
+].filter(Boolean);
 
 const WEEKLY_STATS = {
   questDone: 5,
@@ -120,12 +116,58 @@ function getStockPercent(stock) {
   return Math.min(100, Math.max(6, stock));
 }
 
+function toRankingRow(row) {
+  const rankValue = Number(row.ranking ?? row.rank);
+  const totalExpValue = Number(row.totalExp ?? row.exp ?? 0);
+  const levelValue = Number(row.levelNo ?? row.level);
+
+  const safeRank = Number.isFinite(rankValue) ? rankValue : 0;
+  const safeTotalExp = Number.isFinite(totalExpValue) ? totalExpValue : 0;
+  const levelText = Number.isFinite(levelValue) && levelValue > 0 ? `LV.${levelValue}` : "LV.--";
+
+  return {
+    rank: safeRank,
+    icon: "🏃",
+    name: row.nickname ?? row.name ?? "알 수 없음",
+    xp: `${safeTotalExp.toLocaleString()} XP`,
+    level: levelText,
+    isMe: Boolean(row.isMe),
+  };
+}
+
+async function fetchRankingList() {
+  let lastError;
+
+  for (const endpoint of RANKING_API_PATHS) {
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch rankings: ${endpoint} (${response.status})`);
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error(`Invalid ranking payload from ${endpoint}`);
+      }
+
+      return data;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError ?? new Error("No ranking endpoint available");
+}
+
 function RewardPage() {
   const [points, setPoints] = useState(INITIAL_POINTS);
   const [wallet, setWallet] = useState(INITIAL_WALLET);
   const [rewardItems, setRewardItems] = useState(LQ_REWARD_ITEM_MOCK);
+  const [rankingList, setRankingList] = useState([]);
+  const [myRank, setMyRank] = useState(null);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortType, setSortType] = useState("latest");
+  const [isRankingModalOpen, setIsRankingModalOpen] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -148,6 +190,50 @@ function RewardPage() {
     return () => window.clearTimeout(timer);
   }, [showToast]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRankings = async () => {
+      try {
+        const rankingList = await fetchRankingList();
+        const mapped = rankingList
+          .map(toRankingRow)
+          .filter((row) => row.rank > 0)
+          .sort((a, b) => a.rank - b.rank);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setRankingList(mapped);
+
+        const myRow = mapped.find((row) => row.isMe || row.name.includes("(나)"));
+        if (myRow) {
+          setMyRank({
+            ...myRow,
+            name: myRow.name.includes("(나)") ? myRow.name : `${myRow.name} (나)`,
+          });
+        } else {
+          setMyRank(null);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("실시간 랭킹 조회 실패:", error);
+          setRankingList([]);
+          setMyRank(null);
+        }
+      }
+    };
+
+    loadRankings();
+    const timerId = window.setInterval(loadRankings, 60 * 1000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(timerId);
+    };
+  }, []);
+
   const visibleItems = useMemo(() => {
     const filtered = rewardItems.filter((item) => {
       if (statusFilter === "ALL") {
@@ -166,8 +252,18 @@ function RewardPage() {
     return [...filtered].sort((a, b) => new Date(b.CREATED_AT) - new Date(a.CREATED_AT));
   }, [rewardItems, statusFilter, sortType]);
 
+  const realtimeTop5 = useMemo(() => rankingList.slice(0, 5), [rankingList]);
+
   const canPurchase = (item) => {
     return isOnSaleItem(item) && points >= item.PRICE_POINT;
+  };
+
+  const openRankingModal = () => {
+    setIsRankingModalOpen(true);
+  };
+
+  const closeRankingModal = () => {
+    setIsRankingModalOpen(false);
   };
 
   const openPurchaseModal = (item) => {
@@ -413,36 +509,36 @@ function RewardPage() {
               </div>
 
               <div className="reward-rank-list">
-                {RANKING_TOP3.map((row) => (
-                  <div key={row.rank} className="reward-rank-row">
-                    <span className={`reward-rank-num reward-rank-${row.rank}`}>{row.rank}</span>
-                    <span className="reward-rank-avatar" aria-hidden="true">{row.icon}</span>
-                    <div className="reward-rank-user">
-                      <strong>{row.name}</strong>
-                      <p>{row.xp}</p>
-                    </div>
-                    <span className="reward-rank-level">{row.level}</span>
-                  </div>
-                ))}
+                {realtimeTop5.length > 0 ? (
+                  <>
+                    {realtimeTop5.map((row) => (
+                      <div key={row.rank} className="reward-rank-row">
+                        <span className={`reward-rank-num reward-rank-${row.rank}`}>{row.rank}</span>
+                        <span className="reward-rank-avatar" aria-hidden="true">{row.icon}</span>
+                        <div className="reward-rank-user">
+                          <strong>{row.name}</strong>
+                          <p>{row.xp}</p>
+                        </div>
+                        <span className="reward-rank-level">{row.level}</span>
+                      </div>
+                    ))}
 
-                <div className="reward-rank-dots" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-
-                <div className="reward-rank-row reward-is-me">
-                  <span className="reward-rank-num reward-is-me">{MY_RANK.rank}</span>
-                  <span className="reward-rank-avatar" aria-hidden="true">{MY_RANK.icon}</span>
-                  <div className="reward-rank-user">
-                    <strong>{MY_RANK.name}</strong>
-                    <p>{MY_RANK.xp}</p>
-                  </div>
-                  <span className="reward-rank-level">{MY_RANK.level}</span>
-                </div>
+                    {rankingList.length > realtimeTop5.length ? (
+                      <div className="reward-rank-dots" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <p className="reward-ranking-inline-empty">데이터 없음</p>
+                )}
               </div>
 
-              <button type="button" className="reward-rank-link">전체 랭킹 보기 →</button>
+              <button type="button" className="reward-rank-link" onClick={openRankingModal}>
+                전체 랭킹 보기 →
+              </button>
             </article>
           </div>
         </section>
@@ -557,6 +653,46 @@ function RewardPage() {
           )}
         </section>
       </main>
+
+      <div className={`reward-modal-overlay ${isRankingModalOpen ? "reward-is-open" : ""}`} onClick={closeRankingModal}>
+        <section
+          className="reward-modal-box reward-ranking-modal-box"
+          role="dialog"
+          aria-modal="true"
+          aria-label="전체 랭킹"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="reward-ranking-modal-head">
+            <h3>전체 랭킹</h3>
+            <button type="button" className="reward-ranking-close" onClick={closeRankingModal}>닫기</button>
+          </div>
+
+          <div className="reward-ranking-modal-body">
+            {rankingList.length > 0 ? (
+              <div className="reward-rank-list reward-ranking-full-list">
+                {rankingList.map((row) => {
+                  const isMyRow = myRank ? row.rank === myRank.rank && row.name === myRank.name : row.isMe;
+                  return (
+                    <div key={`modal-${row.rank}-${row.name}`} className={`reward-rank-row ${isMyRow ? "reward-is-me" : ""}`}>
+                      <span className={`reward-rank-num ${row.rank <= 5 ? `reward-rank-${row.rank}` : ""}`}>
+                        {row.rank}
+                      </span>
+                      <span className="reward-rank-avatar" aria-hidden="true">{row.icon}</span>
+                      <div className="reward-rank-user">
+                        <strong>{row.name}</strong>
+                        <p>{row.xp}</p>
+                      </div>
+                      <span className="reward-rank-level">{row.level}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="reward-ranking-empty">데이터 없음</p>
+            )}
+          </div>
+        </section>
+      </div>
 
       <div className={`reward-modal-overlay ${isModalOpen ? "reward-is-open" : ""}`} onClick={closeModal}>
         <section className="reward-modal-box" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>

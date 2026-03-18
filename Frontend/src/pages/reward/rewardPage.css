@@ -33,3 +33,111 @@
   line-height: 1;
 }
 
+/* 랭킹 뱃지 색상: 1~5위 개별 컬러 */
+.reward-rank-num.reward-rank-4 {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.reward-rank-num.reward-rank-5 {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* 전체 랭킹 모달: 기본(6위+) 회색 통일 */
+.reward-ranking-full-list .reward-rank-num {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* 전체 랭킹 모달: 1~5위만 개별 컬러 유지 */
+.reward-ranking-full-list .reward-rank-num.reward-rank-1 {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.reward-ranking-full-list .reward-rank-num.reward-rank-2 {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.reward-ranking-full-list .reward-rank-num.reward-rank-3 {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.reward-ranking-full-list .reward-rank-num.reward-rank-4 {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.reward-ranking-full-list .reward-rank-num.reward-rank-5 {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.reward-ranking-modal-box {
+  width: min(100%, 520px);
+  padding: 22px;
+}
+
+.reward-ranking-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.reward-ranking-modal-head h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.reward-ranking-close {
+  border: 0;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  background: #f1f5f9;
+  cursor: pointer;
+}
+
+.reward-ranking-close:hover {
+  background: #e2e8f0;
+}
+
+.reward-ranking-modal-body {
+  max-height: min(65vh, 520px);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.reward-ranking-full-list .reward-rank-row {
+  border: 1px solid #f1f5f9;
+}
+
+.reward-ranking-full-list .reward-rank-row + .reward-rank-row {
+  margin-top: 8px;
+}
+
+.reward-ranking-empty {
+  margin: 14px 0 4px;
+  text-align: center;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.reward-ranking-inline-empty {
+  margin: 8px 0;
+  padding: 16px 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
