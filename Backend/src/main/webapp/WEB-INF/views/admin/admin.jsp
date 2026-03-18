@@ -10,14 +10,21 @@
     <div id="admin-root">
         <jsp:include page="../common/header.jsp" />
 
-        <div class="admin-container" style="display: flex;">
+        <div class="admin-main-wrapper">
+        <jsp:include page="./admin-navbar.jsp" />
 
-            <main class="admin-content">
-                <h1>관리자 대시보드</h1>
-                <p>여기에 로컬 퀘스트 현황 통계나 사용자 관리 테이블이 들어갑니다.</p>
-                
-                </main>
-        </div>
+        <main class="admin-content-area">
+            <header class="content-header">
+                <h2>대시보드 개요</h2>
+            </header>
+            
+            <section class="dashboard-cards">
+                <div class="card">새 문의 <strong>5건</strong></div>
+                <div class="card">신규 회원 <strong>12명</strong></div>
+                <div class="card">진행 중 퀘스트 <strong>24개</strong></div>
+            </section>
+        </main>
+    </div>
 
     </div>
 </body>
