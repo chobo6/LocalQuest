@@ -11,6 +11,7 @@
 	</settings>
 	
 	<typeAliases>
+		<typeAlias type="com.app.dto.UserDTO" alias="UserDTO"/>
 	</typeAliases>
 	
 </configuration>
