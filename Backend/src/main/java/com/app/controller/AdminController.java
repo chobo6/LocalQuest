@@ -27,24 +27,39 @@ public class AdminController {
 		return "admin/admin";
 	}
 	
-	// 2. 회원 목록 조회 (비동기로 이 부분만 요청함)
-    @GetMapping("/users")
-    public String getUserList(Model model) {
-        List<User> userList = userService.getAllUsers();
-        model.addAttribute("userList", userList);
-        
-        // 레이아웃 전체가 아닌 admin-user.jsp 조각만 리턴!
-        return "admin/admin-user"; 
-    }
+	// 1. 회원 목록 조회 (정렬 및 검색 통합 권장)
+	@GetMapping("/users")
+	public String getUserList(
+	        @RequestParam(value="sort", defaultValue="DESC") String sort,
+	        @RequestParam(value="type", required=false) String type,
+	        @RequestParam(value="keyword", required=false) String keyword,
+	        Model model) {
+	    
+	    // Service에서 정렬과 검색을 동시에 처리하도록 넘깁니다.
+	    List<User> userList = userService.searchUsers(type, keyword, sort);
+	    model.addAttribute("userList", userList);
+	    
+	    return "admin/admin-user"; 
+	}
 
-    // 3. 회원 검색 (비동기 검색 결과)
-    @GetMapping("/search")
-    public String searchUsers(@RequestParam String type, @RequestParam String keyword, Model model) {
-        List<User> searchList = userService.searchUsers(type, keyword);
-        model.addAttribute("userList", searchList);
-        
-        return "admin/admin-user";
-    }
+	// 2. 회원 검색 (검색어와 정렬값을 함께 서비스로 전달)
+	@GetMapping("/search")
+	public String searchUsers(
+	        @RequestParam("type") String type, 
+	        @RequestParam("keyword") String keyword, 
+	        @RequestParam(value="sort", defaultValue="DESC") String sort, // 정렬 파라미터 추가
+	        Model model) {
+	    
+	    // [수정 핵심] 이제 서비스 메서드는 3개의 인자를 받습니다.
+	    List<User> searchList = userService.searchUsers(type, keyword, sort);
+	    
+	    model.addAttribute("userList", searchList);
+	    model.addAttribute("searchType", type);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("sort", sort);
+	    
+	    return "admin/admin-user";
+	}
     
     // 회원정보 상태 변경(관리자, 비니지스, 사용자)
     @PostMapping("/users/updateRole")

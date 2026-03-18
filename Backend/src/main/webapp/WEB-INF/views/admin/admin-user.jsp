@@ -14,10 +14,15 @@
 		</h2>
 		<div class="adm-u-search-group">
 			<select id="searchType" class="adm-u-select">
-				<option value="loginId">아이디</option>
-				<option value="nickname">닉네임</option>
+				<option value="userLoginId"
+					${searchType == 'userLoginId' ? 'selected' : ''}>아이디</option>
+				<option value="name" ${searchType == 'name' ? 'selected' : ''}>이름</option>
+				<option value="nickname"
+					${searchType == 'nickname' ? 'selected' : ''}>닉네임</option>
 			</select> <input type="text" id="keyword" class="adm-u-input"
-				placeholder="검색어를 입력하세요">
+				placeholder="검색어를 입력하세요" value="${keyword}"
+				onkeyup="if(window.event.keyCode==13){searchUser()}">
+
 			<button onclick="searchUser()" class="adm-u-btn-search">검색</button>
 		</div>
 	</div>
@@ -25,7 +30,11 @@
 	<table class="adm-u-table">
 		<thead>
 			<tr>
-				<th>번호</th>
+				<th onclick="sortUserList('${sort}')" style="cursor: pointer;">
+					번호 <i
+					class="fas ${sort == 'ASC' ? 'fa-sort-up' : (sort == 'DESC' ? 'fa-sort-down' : 'fa-sort')}"
+					id="sortIcon"></i>
+				</th>
 				<th>아이디</th>
 				<th>이름</th>
 				<th>닉네임</th>
@@ -43,8 +52,7 @@
 					<td>${user.name}</td>
 					<td>${user.nickname}</td>
 					<td>
-						<%-- admin-user.jsp 내 select 태그 --%> 
-						<select
+						<%-- admin-user.jsp 내 select 태그 --%> <select
 						class="adm-u-table-select"
 						onchange="updateRole(${user.userId}, this.value)"
 						${user.userId == 1 ? 'disabled' : ''}>

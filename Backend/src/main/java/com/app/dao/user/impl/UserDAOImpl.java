@@ -28,12 +28,9 @@ public class UserDAOImpl implements UserDAO {
     public List<User> selectAllUsers() {
         return sqlSessionTemplate.selectList("user_mapper.selectAllUsers");
     }
+    
 
-    @Override
-    public List<User> searchUser(Map<String, Object> searchMap) {
-        return sqlSessionTemplate.selectList("user_mapper.searchUser", searchMap);
-    }
-
+    
     @Override
     public int updateUserRole(Map<String, Object> roleMap) {
         return sqlSessionTemplate.update("user_mapper.updateUserRole", roleMap);
@@ -42,6 +39,11 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public int updateUserStatus(Map<String, Object> statusMap) {
         return sqlSessionTemplate.update("user_mapper.updateUserStatus", statusMap);
+    }
+
+	
+    public List<User> searchUsers(Map<String, Object> searchParams) {
+        return sqlSessionTemplate.selectList("user_mapper.searchUser", searchParams);
     }
 
 }

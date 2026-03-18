@@ -62,6 +62,34 @@
                 }
             });
         }
+        
+        let currentSortOrder = 'DESC'; // 기본 정렬 상태 (최신순)
+
+        /**
+         * 회원 검색 함수
+         */
+        function searchUser() {
+            const type = $('#searchType').val();
+            const keyword = $('#keyword').val();
+            
+            // 검색 시에도 contextPath(ctx) 활용
+            const url = ctx + "/admin/search?type=" + type + "&keyword=" + encodeURIComponent(keyword);
+            loadAdminContent(url);
+        }
+
+        /**
+         * 회원번호 정렬 함수 (클라이언트 사이드 혹은 서버 사이드 선택 가능)
+         * 여기서는 가장 깔끔한 '서버 재요청' 방식을 추천합니다.
+         */
+        function sortUserList() {
+            currentSortOrder = (currentSortOrder === 'DESC') ? 'ASC' : 'DESC';
+            const type = $('#searchType').val();
+            const keyword = $('#keyword').val();
+            
+            // 검색 조건 유지하면서 정렬만 변경해서 다시 로드
+            const url = ctx + "/admin/users?sort=" + currentSortOrder + "&type=" + type + "&keyword=" + keyword;
+            loadAdminContent(url);
+        }
     </script>
 </head>
 <body>

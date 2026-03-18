@@ -13,7 +13,7 @@ public interface UserDAO {
     public List<User> selectAllUsers();
 
     // 2. 회원 검색 (아이디, 닉네임 등)
-    public List<User> searchUser(Map<String, Object> searchMap);
+    List<User> searchUsers(Map<String, Object> params);
 
     // 3. 회원 권한(ROLE) 변경
     public int updateUserRole(Map<String, Object> roleMap);

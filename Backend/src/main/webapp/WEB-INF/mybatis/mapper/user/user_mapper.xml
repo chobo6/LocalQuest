@@ -23,8 +23,7 @@
 	</select>
 
 	<!-- 관리자_회원정보 검색 -->
-	<select id="searchUser" parameterType="map"
-		resultType="User">
+	<select id="searchUser" resultType="User">
 		SELECT
 		USER_ID as userId,
 		USER_LOGIN_ID as userLoginId,
@@ -38,18 +37,25 @@
 		CREATED_AT as createdAt
 		FROM LQ_USER
 		<where>
-			<choose>
-				<when test="searchType == 'loginId'">
-					AND USER_LOGIN_ID = #{keyword}
-				</when>
-				<when test="searchType == 'nickname'">
-					AND NICKNAME LIKE '%' || #{keyword} || '%'
-				</when>
-				<when test="searchType == 'userId'">
-					AND USER_ID = #{keyword}
-				</when>
-			</choose>
+			<if test="type != null and keyword != null and keyword != ''">
+				<choose>
+					<when test="type == 'userLoginId'">
+						AND USER_LOGIN_ID LIKE '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'name'">
+						AND NAME LIKE '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'nickname'">
+						AND NICKNAME LIKE '%' || #{keyword} || '%'
+					</when>
+				</choose>
+			</if>
 		</where>
+		ORDER BY USER_ID
+		<choose>
+			<when test="sort == 'ASC'">ASC</when>
+			<otherwise>DESC</otherwise>
+		</choose>
 	</select>
 
 	<!-- 관리자_회원정보 변경(User_Type 변경) -->

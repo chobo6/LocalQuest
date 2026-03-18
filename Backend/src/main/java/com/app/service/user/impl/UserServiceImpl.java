@@ -56,13 +56,15 @@ public class UserServiceImpl implements UserService{
         return userDAO.selectAllUsers();
     }
 
-    @Override
-    public List<User> searchUsers(String searchType, String keyword) {
-        Map<String, Object> searchMap = new HashMap<>();
-        searchMap.put("searchType", searchType);
-        searchMap.put("keyword", keyword);
-        return userDAO.searchUser(searchMap);
-    }
+	@Override
+	public List<User> searchUsers(String type, String keyword, String sort) {
+	    Map<String, Object> searchParams = new HashMap<>();
+	    searchParams.put("type", type);
+	    searchParams.put("keyword", keyword);
+	    searchParams.put("sort", sort); // 'ASC' 또는 'DESC'
+	    
+	    return userDAO.searchUsers(searchParams);
+	}
 
     @Override
     public boolean changeUserRole(int userId, String newRole) {
