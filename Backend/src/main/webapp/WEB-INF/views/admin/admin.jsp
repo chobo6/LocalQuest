@@ -90,6 +90,50 @@
             const url = ctx + "/admin/users?sort=" + currentSortOrder + "&type=" + type + "&keyword=" + keyword;
             loadAdminContent(url);
         }
+        
+        /**
+         * 회원 상태 변경 (정지 등)
+         */
+        function updateStatus(userId, newStatus) {
+            if (userId === 1) {
+                alert("마스터 관리자는 정지할 수 없습니다.");
+                return;
+            }
+
+            // [확인 절차] 한 번 더 물어보기
+            const actionText = (newStatus === 'WITHDRAWN') ? "정지" : "변경";
+            if (!confirm("해당 회원을 정말로 " + actionText + "하시겠습니까?")) {
+                return;
+            }
+
+            $.ajax({
+                url: ctx + '/admin/users/updateStatus',
+                type: 'POST',
+                data: { 
+                    userId: userId, 
+                    status: newStatus 
+                },
+                success: function(res) {
+                    if (res.trim() === "success") {
+                        alert("상태가 정상적으로 변경되었습니다.");
+                        
+                        // [상태 유지 로드] 현재 화면의 검색어와 정렬값을 그대로 물고 다시 로드
+                        const type = $('#searchType').val();
+                        const keyword = $('#keyword').val();
+                        // 정렬 아이콘 상태를 통해 현재 정렬 확인 (상단 헤더에 저장된 값 활용)
+                        const sort = $('#sortIcon').hasClass('fa-sort-up') ? 'ASC' : 'DESC';
+                        
+                        const url = ctx + "/admin/search?type=" + type + "&keyword=" + encodeURIComponent(keyword) + "&sort=" + sort;
+                        loadAdminContent(url);
+                    } else {
+                        alert("변경에 실패했습니다.");
+                    }
+                },
+                error: function(xhr) {
+                    alert("서버 통신 에러가 발생했습니다.");
+                }
+            });
+        }
     </script>
 </head>
 <body>

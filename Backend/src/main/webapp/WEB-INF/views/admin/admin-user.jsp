@@ -38,7 +38,7 @@
 				<th>아이디</th>
 				<th>이름</th>
 				<th>닉네임</th>
-				<th>권한</th>
+				<th>타입</th>
 				<th>상태</th>
 				<th>가입일</th>
 				<th>설정</th>
@@ -68,10 +68,23 @@
 					<td><span class="adm-u-badge ${user.status}">${user.status}</span>
 					</td>
 					<td class="adm-u-date">${user.createdAt}</td>
-					<td>
-						<button class="adm-u-btn-stop"
-							onclick="updateStatus(${user.userId}, 'WITHDRAWN')">정지</button>
-					</td>
+					<td><c:choose>
+							<%-- 상태가 정지(WITHDRAWN)인 경우: 활성화 버튼 노출 --%>
+							<c:when test="${user.status == 'WITHDRAWN'}">
+								<button class="adm-u-btn-active"
+									onclick="updateStatus(${user.userId}, 'ACTIVE')"
+									style="background-color: #52c41a; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+									활성화</button>
+							</c:when>
+
+							<%-- 상태가 정상(ACTIVE)인 경우: 정지 버튼 노출 (마스터 제외) --%>
+							<c:otherwise>
+								<button class="adm-u-btn-stop"
+									onclick="updateStatus(${user.userId}, 'WITHDRAWN')"
+									${user.userId == 1 ? 'style="display:none;"' : ''}>정지
+								</button>
+							</c:otherwise>
+						</c:choose></td>
 				</tr>
 			</c:forEach>
 		</tbody>

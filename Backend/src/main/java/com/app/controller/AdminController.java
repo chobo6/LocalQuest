@@ -1,6 +1,8 @@
 package com.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -78,6 +80,26 @@ public class AdminController {
             return isUpdated ? "success" : "fail";
         } catch (Exception e) {
             e.printStackTrace(); // 에러 로그 확인용
+            return "error";
+        }
+    }
+    
+    // 회원정보 상태변경
+    @PostMapping("/users/updateStatus")
+    @ResponseBody
+    public String updateStatus(@RequestParam int userId, @RequestParam String status) {
+        // 1. 마스터 관리자 보호 (백엔드 최종 방어)
+        if (userId == 1) {
+            return "fail";
+        }
+        
+        try {
+            // [수정 핵심] 서비스의 파라미터 형식(int, String)에 맞춰서 호출합니다.
+            boolean isUpdated = userService.changeUserStatus(userId, status); 
+            
+            return isUpdated ? "success" : "fail";
+        } catch (Exception e) {
+            e.printStackTrace();
             return "error";
         }
     }
