@@ -19,4 +19,27 @@ public class UserDAOImpl implements UserDAO {
 		return result;
 	}
 
+	@Override
+	public int countByUserLoginId(String userLoginId) {
+		Integer count = sqlSessionTemplate.selectOne("user_mapper.countByUserLoginId", userLoginId);
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public int countByNickname(String nickname) {
+		Integer count = sqlSessionTemplate.selectOne("user_mapper.countByNickname", nickname);
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public int countByEmail(String email) {
+		Integer count = sqlSessionTemplate.selectOne("user_mapper.countByEmail", email);
+		return count == null ? 0 : count;
+	}
+
+	@Override
+	public User findByUserLoginId(String userLoginId) {
+		return sqlSessionTemplate.selectOne("user_mapper.findByUserLoginId", userLoginId);
+	}
+
 }

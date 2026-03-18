@@ -1,20 +1,57 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import './Login.css';
 import Button from '../../../components/common/Button'; // 경로 확인 필요
 import Input from '../../../components/common/Input';   // 경로 확인 필요
+import { userApi } from '../../../api/UserApi';
+import { setAuth } from '../../../store/authSlice';
 
 function Login() {
     // 1. 입력값을 저장할 상태(State) 생성
     const [userId, setUserId] = useState("");
     const [password, setPassword] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // 2. 로그인 버튼 클릭 시 실행될 함수
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("로그인 시도:", { userId, password });
-        // 여기에 백엔드 API 호출 로직이 들어갑니다.
+
+        const trimmedUserId = userId.trim();
+        if (!trimmedUserId || !password) {
+            alert("아이디와 비밀번호를 입력해주세요.");
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            const response = await userApi.login({
+                userId: trimmedUserId,
+                password
+            });
+
+            const data = response.data;
+            dispatch(setAuth({
+                accessToken: data.accessToken,
+                expiresIn: data.expiresIn,
+                user: {
+                    userId: data.userId,
+                    userLoginId: data.userLoginId,
+                    name: data.name,
+                    nickname: data.nickname,
+                    role: data.role
+                }
+            }));
+
+            navigate('/main');
+        } catch (error) {
+            const errorMessage = error.response?.data || "로그인에 실패했습니다.";
+            alert(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -44,7 +81,12 @@ function Login() {
                 </div>
 
                 {/* 공통 Button 컴포넌트 적용 (Primary 스타일) */}
-                <Button text="로그인" type="submit" variant="primary" />
+                <Button
+                    text={isSubmitting ? "로그인 중..." : "로그인"}
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmitting}
+                />
             </form>
 
             <div className="login-find">
