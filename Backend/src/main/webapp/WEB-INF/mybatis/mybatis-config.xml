@@ -12,6 +12,7 @@
 
 	<typeAliases>
 		<typeAlias type="com.app.dto.rank.Rank" alias="Rank" />
+		<typeAlias type="com.app.dto.user.User" alias="User"/>
 	</typeAliases>
 
 </configuration>
