@@ -4,8 +4,10 @@ import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import CustomerService from './pages/support/CustomerService'; 
 import './App.css';
+import MainPage from './pages/main/MainPage';
 
 function App() {
+  
   return (
     <Router>
       <div className="app-shell">
@@ -16,7 +18,7 @@ function App() {
         <main className="app-content"> 
           <Routes>
             {/* 메인 페이지 */}
-            <Route path="/" element={<div>메인 페이지 내용 (지도가 들어갈 자리)</div>} />
+            <Route path="/" element={<MainPage />} />
             
             {/* 통합 고객센터 페이지 (공지/FAQ/1:1문의) */}
             <Route path="/support" element={<CustomerService />} />
