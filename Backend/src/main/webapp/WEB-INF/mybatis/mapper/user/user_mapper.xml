@@ -69,4 +69,34 @@
 		WHERE USER_ID = #{userId}
 	</update>
 
+	<insert id="saveUser" parameterType="User">
+		INSERT INTO LQ_USER (
+		user_id,
+		user_login_id,
+		name,
+		email,
+		password,
+		nickname,
+		birth,
+		gender,
+		role,
+		exp,
+		point,
+		status,
+		created_at
+		) VALUES (
+		SEQ_LQ_USER_PK.nextval,
+		#{userLoginId},
+		#{name},
+		#{email},
+		#{password},
+		#{nickname},
+		#{birth},
+		#{gender},
+		#{role},
+		#{exp},
+		#{point},
+		#{status},
+		sysdate )
+	</insert>
 </mapper>
