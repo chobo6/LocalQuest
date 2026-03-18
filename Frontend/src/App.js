@@ -8,12 +8,12 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div className="app-shell">
         {/* 모든 페이지에서 공통으로 보이는 헤더 */}
         <Header />
         
         {/* 실제 페이지 내용이 갈아끼워지는 영역 */}
-        <main className="main-content" style={{ minHeight: '80vh' }}> 
+        <main className="app-content"> 
           <Routes>
             {/* 메인 페이지 */}
             <Route path="/" element={<div>메인 페이지 내용 (지도가 들어갈 자리)</div>} />
