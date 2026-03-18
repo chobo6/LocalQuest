@@ -1,5 +1,9 @@
 package com.app.service.user.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +51,35 @@ public class UserServiceImpl implements UserService{
 		return result;
 	}
 
+	@Override
+    public List<User> getAllUsers() {
+        return userDAO.selectAllUsers();
+    }
 
+    @Override
+    public List<User> searchUsers(String searchType, String keyword) {
+        Map<String, Object> searchMap = new HashMap<>();
+        searchMap.put("searchType", searchType);
+        searchMap.put("keyword", keyword);
+        return userDAO.searchUser(searchMap);
+    }
+
+    @Override
+    public boolean changeUserRole(int userId, String newRole) {
+        Map<String, Object> roleMap = new HashMap<>();
+        roleMap.put("userId", userId);
+        roleMap.put("newRole", newRole);
+        
+        // 업데이트된 행의 수가 1이면 성공(true) 반환
+        return userDAO.updateUserRole(roleMap) == 1;
+    }
+
+    @Override
+    public boolean changeUserStatus(int userId, String newStatus) {
+        Map<String, Object> statusMap = new HashMap<>();
+        statusMap.put("userId", userId);
+        statusMap.put("newStatus", newStatus);
+        
+        return userDAO.updateUserStatus(statusMap) == 1;
+    }
 }
