@@ -141,3 +141,27 @@
   color: #94a3b8;
 }
 
+.reward-level-placeholder {
+  min-height: 300px;
+  border: 1px dashed #dbe3ee;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #94a3b8;
+  gap: 4px;
+  padding: 24px;
+}
+
+.reward-level-placeholder strong {
+  color: #334155;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.reward-level-placeholder span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+

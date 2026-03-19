@@ -13,6 +13,9 @@
 	<typeAliases>
 		<typeAlias type="com.app.dto.rank.Rank" alias="Rank" />
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
+		<typeAlias type="com.app.dto.reward.RewardBoxSummary" alias="RewardBoxSummary"/>
+		<typeAlias type="com.app.dto.reward.RewardRoadmapItem" alias="RewardRoadmapItem"/>
+		<typeAlias type="com.app.dto.reward.RewardWalletCoupon" alias="RewardWalletCoupon"/>
 	</typeAliases>
 
 </configuration>

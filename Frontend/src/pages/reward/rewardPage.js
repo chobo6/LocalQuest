@@ -1,27 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { rewardApi } from "../../api/RewardApi";
 import "./rewardPage.css";
 
-const CURRENT_LEVEL = 12;
-const NEXT_LEVEL_PROGRESS = 72;
-const NEXT_LEVEL_REMAIN_XP = 580;
-const INITIAL_POINTS = 3200;
+const DEFAULT_LEVEL_BOX = {
+  nickname: "",
+  currentLevel: 12,
+  currentGradeName: "워커",
+  point: 3200,
+  nextLevel: 13,
+  nextLevelRemainXp: 580,
+  progressPercent: 72,
+  nextGradeName: "가이드",
+  nextGradeMinLevel: 16,
+  remainLevelToNextGrade: 4,
+  roadmap: [
+    { gradeName: "비기너", minLevel: 1, maxLevel: 5 },
+    { gradeName: "워커", minLevel: 6, maxLevel: 15 },
+    { gradeName: "가이드", minLevel: 16, maxLevel: 30 },
+    { gradeName: "챌린저", minLevel: 31, maxLevel: 50 },
+    { gradeName: "레전드", minLevel: 51, maxLevel: null },
+  ],
+};
 
-const INITIAL_WALLET = [
-  {
-    id: "w-1",
-    name: "아메리카노 1,500원 할인",
-    store: "푸른밤 카페",
-    expire: "5일 남음",
-    urgent: false,
-  },
-  {
-    id: "w-2",
-    name: "사이드 메뉴 무료",
-    store: "마루 국수 성수점",
-    expire: "2일 남음",
-    urgent: true,
-  },
-];
+const GRADE_ICON_MAP = {
+  비기너: "✓",
+  워커: "🚶",
+  가이드: "🚩",
+  챌린저: "🏅",
+  레전드: "👑",
+};
 
 // LQ_REWARD_ITEM 테이블 형태의 더미 데이터
 const LQ_REWARD_ITEM_MOCK = [
@@ -99,6 +106,80 @@ const WEEKLY_STATS = {
   weeklyProgress: 88,
 };
 
+function resolveNicknameFromClient() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const queryNickname = new URLSearchParams(window.location.search).get("nickname");
+  if (queryNickname && queryNickname.trim()) {
+    return queryNickname.trim();
+  }
+
+  const storageKeys = ["lq_nickname", "nickname", "userNickname"];
+  for (const key of storageKeys) {
+    const storedValue = window.localStorage.getItem(key);
+    if (storedValue && storedValue.trim()) {
+      return storedValue.trim();
+    }
+  }
+
+  return "";
+}
+
+function toSafeNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizeRoadmapItems(roadmap) {
+  if (!Array.isArray(roadmap) || roadmap.length === 0) {
+    return DEFAULT_LEVEL_BOX.roadmap;
+  }
+
+  return roadmap.map((item, index) => {
+    const fallback = DEFAULT_LEVEL_BOX.roadmap[index] ?? {};
+    const minLevel = toSafeNumber(item?.minLevel, toSafeNumber(fallback.minLevel, 1));
+    const maxLevelRaw = item?.maxLevel;
+    const maxLevel =
+      maxLevelRaw === null || maxLevelRaw === undefined ? null : toSafeNumber(maxLevelRaw, null);
+
+    return {
+      gradeName: item?.gradeName ?? fallback.gradeName ?? `등급 ${index + 1}`,
+      minLevel,
+      maxLevel,
+    };
+  });
+}
+
+function formatRoadmapLevel(minLevel, maxLevel) {
+  if (maxLevel === null || maxLevel === undefined) {
+    return `Lv.${minLevel}+`;
+  }
+  return `Lv.${minLevel}~${maxLevel}`;
+}
+
+function isRoadmapDone(item, currentLevel) {
+  if (item.maxLevel === null || item.maxLevel === undefined) {
+    return false;
+  }
+  return currentLevel > item.maxLevel;
+}
+
+function isRoadmapCurrent(item, currentLevel) {
+  if (currentLevel < item.minLevel) {
+    return false;
+  }
+  if (item.maxLevel === null || item.maxLevel === undefined) {
+    return true;
+  }
+  return currentLevel <= item.maxLevel;
+}
+
+function getGradeIcon(gradeName, fallback = "🏃") {
+  return GRADE_ICON_MAP[gradeName] ?? fallback;
+}
+
 function formatPoint(value) {
   return `${value.toLocaleString()} P`;
 }
@@ -160,8 +241,11 @@ async function fetchRankingList() {
 }
 
 function RewardPage() {
-  const [points, setPoints] = useState(INITIAL_POINTS);
-  const [wallet, setWallet] = useState(INITIAL_WALLET);
+  const [levelBox, setLevelBox] = useState(null);
+  const [isLevelBoxLoading, setIsLevelBoxLoading] = useState(true);
+  const [points, setPoints] = useState(0);
+  const [wallet, setWallet] = useState([]);
+  const [isWalletLoading, setIsWalletLoading] = useState(true);
   const [rewardItems, setRewardItems] = useState(LQ_REWARD_ITEM_MOCK);
   const [rankingList, setRankingList] = useState([]);
   const [myRank, setMyRank] = useState(null);
@@ -193,6 +277,150 @@ function RewardPage() {
   useEffect(() => {
     let isMounted = true;
 
+    const loadLevelBoxSummary = async () => {
+      try {
+        if (isMounted) {
+          setIsLevelBoxLoading(true);
+        }
+
+        const nickname = resolveNicknameFromClient();
+        if (!nickname) {
+          if (isMounted) {
+            setLevelBox(null);
+            setPoints(0);
+          }
+          return;
+        }
+
+        const response = await rewardApi.getRewardSummary(nickname);
+        const data = response?.data;
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (!data || data.currentLevel == null || data.point == null) {
+          setLevelBox(null);
+          setPoints(0);
+          return;
+        }
+
+        const currentLevel = Math.max(1, toSafeNumber(data.currentLevel, DEFAULT_LEVEL_BOX.currentLevel));
+        const nextLevel = Math.max(currentLevel + 1, toSafeNumber(data.nextLevel, currentLevel + 1));
+        const point = Math.max(0, toSafeNumber(data.point, DEFAULT_LEVEL_BOX.point));
+        const nextLevelRemainXp = Math.max(
+          0,
+          toSafeNumber(data.nextLevelRemainXp, DEFAULT_LEVEL_BOX.nextLevelRemainXp),
+        );
+        const progressPercent = Math.min(
+          100,
+          Math.max(0, toSafeNumber(data.progressPercent, DEFAULT_LEVEL_BOX.progressPercent)),
+        );
+        const nextGradeMinLevel = data.nextGradeMinLevel == null
+          ? null
+          : Math.max(currentLevel + 1, toSafeNumber(data.nextGradeMinLevel, currentLevel + 1));
+        const remainLevelToNextGrade = nextGradeMinLevel == null
+          ? 0
+          : Math.max(
+              0,
+              toSafeNumber(data.remainLevelToNextGrade, nextGradeMinLevel - currentLevel),
+            );
+
+        setLevelBox({
+          nickname: data.nickname ?? "",
+          currentLevel,
+          currentGradeName: data.currentGradeName ?? DEFAULT_LEVEL_BOX.currentGradeName,
+          point,
+          nextLevel,
+          nextLevelRemainXp,
+          progressPercent,
+          nextGradeName: data.nextGradeName ?? DEFAULT_LEVEL_BOX.nextGradeName,
+          nextGradeMinLevel,
+          remainLevelToNextGrade,
+          roadmap: normalizeRoadmapItems(data.roadmap),
+        });
+
+        setPoints(point);
+      } catch (error) {
+        if (isMounted) {
+          console.error("리워드 상단 박스 조회 실패:", error);
+          setLevelBox(null);
+          setPoints(0);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLevelBoxLoading(false);
+        }
+      }
+    };
+
+    loadLevelBoxSummary();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadWallet = async () => {
+      try {
+        if (isMounted) {
+          setIsWalletLoading(true);
+        }
+
+        const nickname = resolveNicknameFromClient();
+        if (!nickname) {
+          if (isMounted) {
+            setWallet([]);
+          }
+          return;
+        }
+
+        const response = await rewardApi.getRewardWallet(nickname);
+        const data = response?.data;
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (!Array.isArray(data)) {
+          setWallet([]);
+          return;
+        }
+
+        const mappedWallet = data.map((coupon, index) => ({
+          id: coupon?.exchangeId ?? `wallet-${index}`,
+          name: coupon?.name ?? "쿠폰",
+          store: coupon?.store ?? "리워드 상점",
+          expire: coupon?.expire ?? "만료일 미정",
+          urgent: Boolean(coupon?.urgent),
+        }));
+
+        setWallet(mappedWallet);
+      } catch (error) {
+        if (isMounted) {
+          console.error("쿠폰 보관함 조회 실패:", error);
+          setWallet([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsWalletLoading(false);
+        }
+      }
+    };
+
+    loadWallet();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
     const loadRankings = async () => {
       try {
         const rankingList = await fetchRankingList();
@@ -207,7 +435,12 @@ function RewardPage() {
 
         setRankingList(mapped);
 
-        const myRow = mapped.find((row) => row.isMe || row.name.includes("(나)"));
+        const myNickname = levelBox?.nickname?.trim();
+        const myRow = mapped.find((row) => (
+          row.isMe
+          || row.name.includes("(나)")
+          || (myNickname && row.name === myNickname)
+        ));
         if (myRow) {
           setMyRank({
             ...myRow,
@@ -232,7 +465,7 @@ function RewardPage() {
       isMounted = false;
       window.clearInterval(timerId);
     };
-  }, []);
+  }, [levelBox?.nickname]);
 
   const visibleItems = useMemo(() => {
     const filtered = rewardItems.filter((item) => {
@@ -253,6 +486,20 @@ function RewardPage() {
   }, [rewardItems, statusFilter, sortType]);
 
   const realtimeTop5 = useMemo(() => rankingList.slice(0, 5), [rankingList]);
+  const roadmapItems = useMemo(() => normalizeRoadmapItems(levelBox?.roadmap), [levelBox?.roadmap]);
+  const currentGradeIcon = useMemo(
+    () => getGradeIcon(levelBox?.currentGradeName, "🚶"),
+    [levelBox?.currentGradeName],
+  );
+  const nextGradeLabel = useMemo(() => {
+    if (!levelBox) {
+      return "";
+    }
+    if (levelBox.nextGradeMinLevel == null) {
+      return "최종 등급";
+    }
+    return `${levelBox.nextGradeName} (Lv.${levelBox.nextGradeMinLevel})`;
+  }, [levelBox]);
 
   const canPurchase = (item) => {
     return isOnSaleItem(item) && points >= item.PRICE_POINT;
@@ -349,90 +596,110 @@ function RewardPage() {
 
         <section className="reward-top-grid">
           <div className="reward-left-column">
-            <article className="reward-card reward-level-card">
-              <div className="reward-level-label-row">
-                <p>나의 등급</p>
-                <p>보유 포인트</p>
-              </div>
-
-              <div className="reward-level-summary-row">
-                <div className="reward-level-summary-left">
-                  <strong className="reward-level-number">LV.{CURRENT_LEVEL}</strong>
-                  <span className="reward-grade-pill reward-grade-walker">🚶 워커</span>
+            {isLevelBoxLoading ? (
+              <article className="reward-card reward-level-card">
+                <div className="reward-level-placeholder">
+                  <strong>등급 데이터를 불러오는 중입니다</strong>
                 </div>
-                <strong className="reward-total-xp">{points.toLocaleString()}P</strong>
-              </div>
-
-              <div>
-                <div className="reward-level-progress-head">
-                  <span>다음 레벨까지</span>
-                  <span>{NEXT_LEVEL_REMAIN_XP.toLocaleString()} XP 남음</span>
+              </article>
+            ) : levelBox ? (
+              <article className="reward-card reward-level-card">
+                <div className="reward-level-label-row">
+                  <p>나의 등급</p>
+                  <p>보유 포인트</p>
                 </div>
-                <div className="reward-xp-bar">
-                  <div className="reward-xp-fill" style={{ width: xpAnimated ? `${NEXT_LEVEL_PROGRESS}%` : "0%" }} />
+
+                <div className="reward-level-summary-row">
+                  <div className="reward-level-summary-left">
+                    <strong className="reward-level-number">LV.{levelBox.currentLevel}</strong>
+                    <span className="reward-grade-pill reward-grade-walker">
+                      {currentGradeIcon} {levelBox.currentGradeName}
+                    </span>
+                  </div>
+                  <strong className="reward-total-xp">{points.toLocaleString()}P</strong>
                 </div>
-                <div className="reward-level-progress-foot">
-                  <span>LV.12</span>
-                  <span>{NEXT_LEVEL_PROGRESS}% 달성</span>
-                  <span>LV.13</span>
-                </div>
-              </div>
 
-              <div className="reward-roadmap-wrap">
-                <p className="reward-roadmap-title">등급 로드맵</p>
-                <div className="reward-roadmap-track">
-                  <div className="reward-roadmap-node">
-                    <div className="reward-roadmap-badge reward-is-done">✓</div>
-                    <p>비기너</p>
-                    <span>Lv.1~5</span>
+                <div>
+                  <div className="reward-level-progress-head">
+                    <span>다음 레벨까지</span>
+                    <span>{levelBox.nextLevelRemainXp.toLocaleString()} XP 남음</span>
                   </div>
-
-                  <div className="reward-roadmap-line reward-is-done" />
-
-                  <div className="reward-roadmap-node">
-                    <div className="reward-roadmap-badge reward-is-current">🚶</div>
-                    <p className="reward-is-current-text">워커 (현재)</p>
-                    <span>Lv.6~15</span>
+                  <div className="reward-xp-bar">
+                    <div className="reward-xp-fill" style={{ width: xpAnimated ? `${levelBox.progressPercent}%` : "0%" }} />
                   </div>
-
-                  <div className="reward-roadmap-line" />
-
-                  <div className="reward-roadmap-node reward-is-future">
-                    <div className="reward-roadmap-badge">🚩</div>
-                    <p>가이드</p>
-                    <span>Lv.16~30</span>
-                  </div>
-
-                  <div className="reward-roadmap-line" />
-
-                  <div className="reward-roadmap-node reward-is-future">
-                    <div className="reward-roadmap-badge">🎖️</div>
-                    <p>챌린저</p>
-                    <span>Lv.31~50</span>
-                  </div>
-
-                  <div className="reward-roadmap-line" />
-
-                  <div className="reward-roadmap-node reward-is-future reward-is-legend">
-                    <div className="reward-roadmap-badge">👑</div>
-                    <p>레전드</p>
-                    <span>Lv.51+</span>
+                  <div className="reward-level-progress-foot">
+                    <span>LV.{levelBox.currentLevel}</span>
+                    <span>{levelBox.progressPercent}% 달성</span>
+                    <span>LV.{levelBox.nextLevel}</span>
                   </div>
                 </div>
-              </div>
 
-              <div className="reward-guide-benefit-box">
-                <span className="reward-guide-benefit-emoji" aria-hidden="true">🚩</span>
-                <div className="reward-guide-benefit-content">
-                  <p>가이드 (Lv.16) 달성 시 혜택</p>
-                  <strong>리워드 상점 <span>5% 상시 할인</span> 쿠폰 자동 지급</strong>
+                <div className="reward-roadmap-wrap">
+                  <p className="reward-roadmap-title">등급 로드맵</p>
+                  <div className="reward-roadmap-track">
+                    {roadmapItems.map((grade, index) => {
+                      const done = isRoadmapDone(grade, levelBox.currentLevel);
+                      const current = isRoadmapCurrent(grade, levelBox.currentLevel) && !done;
+                      const isLegend = grade.gradeName === "레전드";
+                      const nodeClassName = [
+                        "reward-roadmap-node",
+                        !done && !current ? "reward-is-future" : "",
+                        !done && !current && isLegend ? "reward-is-legend" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ");
+
+                      return (
+                        <Fragment key={`${grade.gradeName}-${grade.minLevel}-${index}`}>
+                          <div className={nodeClassName}>
+                            <div
+                              className={[
+                                "reward-roadmap-badge",
+                                done ? "reward-is-done" : "",
+                                current ? "reward-is-current" : "",
+                              ]
+                                .filter(Boolean)
+                                .join(" ")}
+                            >
+                              {done ? "✓" : getGradeIcon(grade.gradeName)}
+                            </div>
+                            <p className={current ? "reward-is-current-text" : ""}>
+                              {current ? `${grade.gradeName} (현재)` : grade.gradeName}
+                            </p>
+                            <span>{formatRoadmapLevel(grade.minLevel, grade.maxLevel)}</span>
+                          </div>
+
+                          {index < roadmapItems.length - 1 ? (
+                            <div className={`reward-roadmap-line ${done ? "reward-is-done" : ""}`} />
+                          ) : null}
+                        </Fragment>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="reward-guide-benefit-count">
-                  <p>남은 레벨</p>
-                  <strong>4</strong>
+
+                <div className="reward-guide-benefit-box">
+                  <span className="reward-guide-benefit-emoji" aria-hidden="true">
+                    {getGradeIcon(levelBox.nextGradeName, "🚩")}
+                  </span>
+                  <div className="reward-guide-benefit-content">
+                    <p>{nextGradeLabel} 달성 시 혜택</p>
+                    <strong>리워드 상점 <span>5% 상시 할인</span> 쿠폰 자동 지급</strong>
+                  </div>
+                  <div className="reward-guide-benefit-count">
+                    <p>남은 레벨</p>
+                    <strong>{levelBox.remainLevelToNextGrade}</strong>
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
+            ) : (
+              <article className="reward-card reward-level-card">
+                <div className="reward-level-placeholder">
+                  <strong>등급 데이터 없음</strong>
+                  <span>연동 가능한 사용자 데이터가 없어서 표시할 수 없어요.</span>
+                </div>
+              </article>
+            )}
 
             <article className="reward-card reward-wallet-card">
               <div className="reward-wallet-head">
@@ -440,7 +707,12 @@ function RewardPage() {
                 <span>{wallet.length}개 보유</span>
               </div>
 
-              {wallet.length > 0 ? (
+              {isWalletLoading ? (
+                <div className="reward-wallet-empty">
+                  <div className="reward-wallet-empty-label">쿠폰함</div>
+                  <strong>쿠폰 데이터를 불러오는 중...</strong>
+                </div>
+              ) : wallet.length > 0 ? (
                 <div className="reward-wallet-grid">
                   {wallet.map((coupon) => (
                     <article key={coupon.id} className="reward-ticket">
