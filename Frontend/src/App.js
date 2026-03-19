@@ -6,6 +6,9 @@ import SocialLoginCallback from './pages/auth/login/SocialLoginCallback';
 import SignUp from './pages/auth/signup/SignUp';
 import Terms from './pages/auth/signup/Terms';
 import MainPage from './pages/main/MainPage';
+import QuestList from './pages/quest/QuestList/QuestList';
+import QuestDetail from './pages/quest/QuestDetail/QuestDetail';
+import MyQuest from './pages/quest/MyQuest/MyQuest';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 
@@ -29,6 +32,9 @@ function AppRoutes({ isAuthenticated }) {
           path="/main"
           element={<MainPage />}
         />
+        <Route path="/explore" element={<QuestList />} />
+        <Route path="/explore/:questId" element={<QuestDetail />} />
+        <Route path="/quest" element={<MyQuest />} />
         <Route
           path="/"
           element={<Navigate to="/main" replace />}

@@ -97,7 +97,7 @@ function QuestList() {
               <QuestCard
                 key={quest.id}
                 quest={quest}
-                onClick={() => navigate(`/quest/${quest.id}`)}
+                onClick={() => navigate(`/explore/${quest.id}`)}
               />
             ))
           ) : (
