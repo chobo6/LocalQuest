@@ -232,6 +232,20 @@
             }, 200);
         }
         
+        /**
+         * 퀘스트 검색 및 필터링
+         */
+        function searchQuest() {
+            const status = $('#filterStatus').val(); // 활성/비활성 선택값
+            const keyword = $('#searchQuestName').val(); // 검색어
+            
+            // URL 파라미터 조합
+            const url = ctx + "/admin/quests?status=" + status + "&keyword=" + encodeURIComponent(keyword);
+            
+            // 기존에 만드신 콘텐츠 로더 함수 호출
+            loadAdminContent(url);
+        }
+        
     </script>
 </head>
 <body>

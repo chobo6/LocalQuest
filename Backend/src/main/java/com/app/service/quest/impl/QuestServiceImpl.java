@@ -47,4 +47,9 @@ public class QuestServiceImpl implements QuestService{
     public boolean updateQuest(QuestDTO quest) {
         return questDAO.updateQuest(quest) > 0;
     }
+    
+    @Override
+    public List<QuestDTO> getSearchQuests(Map<String, Object> params) {
+        return questDAO.selectSearchQuests(params);
+    }
 }

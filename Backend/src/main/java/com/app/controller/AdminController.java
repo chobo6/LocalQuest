@@ -1,6 +1,8 @@
 package com.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -113,14 +115,28 @@ public class AdminController {
      * 1. 퀘스트 관리 메인 페이지 (전체 목록 조회)
      */
     @GetMapping("/quests")
-    public String questList(Model model) {
-        List<QuestDTO> questList = questService.getAllQuests();
+    public String questList(
+        @RequestParam(value="status", required=false) String status,
+        @RequestParam(value="keyword", required=false) String keyword,
+        Model model) {
+        
+        // 1. 검색 조건을 Map에 담기
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", (status != null && !status.isEmpty()) ? status : null);
+        params.put("keyword", (keyword != null && !keyword.isEmpty()) ? keyword : null);
+        
+        // 2. 통합 서비스 호출 
+        // (params가 비어있으면 MyBatis 동적 쿼리가 전체를 조회합니다)
+        List<QuestDTO> questList = questService.getSearchQuests(params);
+        
         model.addAttribute("questList", questList);
         
-        // admin/admin-quest.jsp로 이동
+        // 3. 검색 조건 유지 (화면 input/select 박스 상태 유지용)
+        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentKeyword", keyword);
+        
         return "admin/admin-quest";
     }
-
     /**
      * 2. 퀘스트 상태 변경 (비동기 처리)
      * @param questId 변경할 퀘스트 번호
@@ -186,4 +202,5 @@ public class AdminController {
             return "error";
         }
     }
+    
 }

@@ -246,3 +246,46 @@
 .adm-q-btn-add:hover i {
     transform: rotate(90deg);
 }
+
+.adm-q-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.adm-q-controls select {
+    padding: 8px 12px;
+    background-color: #1e1e2d;
+    border: 1px solid #323248;
+    color: #ffffff;
+    border-radius: 6px;
+    outline: none;
+}
+
+.adm-q-search-box {
+    display: flex;
+    background-color: #1e1e2d;
+    border: 1px solid #323248;
+    border-radius: 6px;
+    padding: 2px 5px;
+}
+
+.adm-q-search-box input {
+    background: none;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    outline: none;
+}
+
+.adm-q-search-box button {
+    background: none;
+    border: none;
+    color: #7239ea;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.adm-q-search-box button:hover {
+    color: #ffffff;
+}

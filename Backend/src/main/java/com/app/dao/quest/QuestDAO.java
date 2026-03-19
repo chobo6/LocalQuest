@@ -22,4 +22,7 @@ public interface QuestDAO {
     // 퀘스트 상태 변경 (ACTIVE, INACTIVE, DELETED)
     int updateQuestStatus(Map<String, Object> params);
     
+    // 퀘스트 검색/필터
+    public List<QuestDTO> selectSearchQuests(Map<String, Object> params);
+    
 }
