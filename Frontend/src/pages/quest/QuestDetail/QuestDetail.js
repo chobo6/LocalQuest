@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import { questApi } from '../../../api/QuestApi';
 import './QuestDetail.css';
 
@@ -56,9 +54,7 @@ function QuestDetail() {
 
   return (
     <div className="quest-detail-page">
-      <Header />
-
-      <main className="quest-detail-main">
+      <div className="quest-detail-main">
         <button type="button" className="quest-detail-back" onClick={() => navigate('/explore')}>
           목록으로 돌아가기
         </button>
@@ -128,9 +124,7 @@ function QuestDetail() {
             <p>목록으로 돌아가 다른 퀘스트를 선택해주세요.</p>
           </section>
         )}
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

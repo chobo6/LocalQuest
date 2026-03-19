@@ -1,6 +1,4 @@
 import React from 'react';
-import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import './MyQuest.css';
 
 const ongoingQuests = [
@@ -48,9 +46,7 @@ const recommendedQuests = [
 function MyQuest() {
   return (
     <div className="my-quest-page">
-      <Header />
-
-      <main className="my-quest-main">
+      <div className="my-quest-main">
         <section className="my-quest-hero">
           <div className="my-quest-hero-copy">
             <span className="my-quest-eyebrow">MY QUEST</span>
@@ -135,9 +131,7 @@ function MyQuest() {
             ))}
           </div>
         </section>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

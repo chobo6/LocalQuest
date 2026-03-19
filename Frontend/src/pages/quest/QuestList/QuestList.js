@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/common/Header';
-import Footer from '../../../components/common/Footer';
 import QuestCard from '../../../components/quest/QuestCard';
 import { questApi } from '../../../api/QuestApi';
 import './QuestList.css';
@@ -49,9 +47,7 @@ function QuestList() {
 
   return (
     <div className="quest-list-page">
-      <Header />
-
-      <main className="quest-list-main">
+      <div className="quest-list-main">
         <section className="quest-list-hero">
           <div className="quest-list-hero-copy">
             <span className="quest-list-eyebrow">QUEST BOARD</span>
@@ -109,9 +105,7 @@ function QuestList() {
             </div>
           )}
         </section>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

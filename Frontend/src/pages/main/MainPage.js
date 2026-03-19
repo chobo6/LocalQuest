@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import Header from '../../components/common/Header';
-import Footer from '../../components/common/Footer';
 import './MainPage.css';
 
 const LOCATION_CONSENT_KEY = 'localquest_location_consent';
@@ -219,9 +217,7 @@ function MainPage() {
 
   return (
     <div className="main-page-shell">
-      <Header />
-
-      <main className="main-page">
+      <div className="main-page">
         <section className="hero-map-section">
           <div className="hero-copy">
             <span className="hero-chip">MISSION BASED O2O PLATFORM</span>
@@ -321,9 +317,7 @@ function MainPage() {
             </div>
           </div>
         )}
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }
