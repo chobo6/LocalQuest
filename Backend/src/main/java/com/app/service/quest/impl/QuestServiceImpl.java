@@ -42,6 +42,7 @@ public class QuestServiceImpl implements QuestService {
         questDetail.setCategory(quest.getCategory());
         questDetail.setRewardExp(quest.getRewardExp());
         questDetail.setRewardPoint(quest.getRewardPoint());
+        questDetail.setTimeLimit(quest.getTimeLimit());
         questDetail.setStatus(quest.getStatus());
         questDetail.setCreatedAt(quest.getCreatedAt());
         questDetail.setLocations(questDAO.selectQuestLocationsByQuestId(questId));

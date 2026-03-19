@@ -4,14 +4,16 @@ import QuestCard from '../../../components/quest/QuestCard';
 import { questApi } from '../../../api/QuestApi';
 import './QuestList.css';
 
+const formatDuration = (timeLimit) => (timeLimit ? `${timeLimit}분` : '제한 없음');
+
 const toQuestCardModel = (quest) => ({
   id: quest.questId,
   title: quest.title,
   description: quest.description,
   category: quest.category,
   difficulty: quest.rewardExp >= 300 ? '어려움' : quest.rewardExp >= 180 ? '보통' : '쉬움',
-  location: '지역 정보 준비 중',
-  duration: `${Math.max(30, Math.round(quest.rewardExp / 2))}분`,
+  location: '위치 정보 준비 중',
+  duration: formatDuration(quest.timeLimit),
   reward: `${quest.rewardPoint}P`,
   status: quest.status,
 });
@@ -52,7 +54,7 @@ function QuestList() {
           <div className="quest-list-hero-copy">
             <span className="quest-list-eyebrow">QUEST BOARD</span>
             <h1>지금 참여할 수 있는 로컬 퀘스트를 확인해보세요.</h1>
-            <p>백엔드에서 내려오는 퀘스트 데이터를 기준으로 목록을 보여줍니다.</p>
+            <p>백엔드에 등록된 퀘스트 데이터를 기준으로 목록을 보여줍니다.</p>
           </div>
 
           <div className="quest-list-summary-card">
@@ -65,7 +67,7 @@ function QuestList() {
         <section className="quest-list-toolbar">
           <div>
             <h2>{selectedFilter === '전체' ? '전체 퀘스트' : `${selectedFilter} 퀘스트`}</h2>
-            <p>카테고리 목록도 백엔드 데이터 기준으로 생성됩니다.</p>
+            <p>카테고리 목록은 백엔드 데이터 기준으로 생성됩니다.</p>
           </div>
           <div className="quest-list-filters">
             {filterOptions.map((filter) => (

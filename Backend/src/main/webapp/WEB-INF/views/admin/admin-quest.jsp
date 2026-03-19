@@ -34,6 +34,15 @@
                     <div class="reward-item">
                         <i class="fas fa-coins point-icon"></i> <span>${quest.rewardPoint} PT</span>
                     </div>
+                    <div class="reward-item">
+                        <i class="fas fa-clock"></i>
+                        <span>
+                            <c:choose>
+                                <c:when test="${not empty quest.timeLimit}">${quest.timeLimit}분</c:when>
+                                <c:otherwise>제한 없음</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </div>
                 </div>
 
                 <div class="adm-q-card-footer">
