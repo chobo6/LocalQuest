@@ -56,15 +56,20 @@ public class QuestServiceImpl implements QuestService {
     }
 
     @Override
-    public boolean modifyQuest(QuestDTO quest) {
-        return questDAO.updateQuest(quest) == 1;
-    }
-
-    @Override
     public boolean changeQuestStatus(int questId, String status) {
         Map<String, Object> params = new HashMap<>();
         params.put("questId", questId);
         params.put("status", status);
         return questDAO.updateQuestStatus(params) == 1;
+    }
+    
+    @Override
+    public boolean updateQuest(QuestDTO quest) {
+        return questDAO.updateQuest(quest) > 0;
+    }
+    
+    @Override
+    public List<QuestDTO> getSearchQuests(Map<String, Object> params) {
+        return questDAO.selectSearchQuests(params);
     }
 }

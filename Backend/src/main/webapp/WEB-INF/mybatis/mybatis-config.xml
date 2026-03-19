@@ -39,6 +39,7 @@
 		<typeAlias type="com.app.dto.reward.RewardShopItem" alias="RewardShopItem"/>
 		<typeAlias type="com.app.dto.reward.RewardWeeklyStats" alias="RewardWeeklyStats"/>
 		<typeAlias type="com.app.dto.reward.RewardWalletCoupon" alias="RewardWalletCoupon"/>
+		<typeAlias type="com.app.dto.reward.RewardItemDTO" alias="RewardItem"/>
     </typeAliases>
 
 </configuration>

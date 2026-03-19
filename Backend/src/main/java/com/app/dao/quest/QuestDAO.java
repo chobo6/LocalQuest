@@ -18,4 +18,8 @@ public interface QuestDAO {
     int updateQuest(QuestDTO quest);
 
     int updateQuestStatus(Map<String, Object> params);
+    
+    // 퀘스트 검색/필터
+    public List<QuestDTO> selectSearchQuests(Map<String, Object> params);
+    
 }

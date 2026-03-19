@@ -19,7 +19,7 @@
 					class="fas fa-users-cog"></i> 회원 관리
 			</a></li>
 			<li class="admin-nav-item"><a href="javascript:void(0)"
-				onclick="loadAdminContent('${path}/admin/shops', this)"> <i
+				onclick="loadAdminContent('${path}/admin/shop', this)"> <i
 					class="fas fa-store"></i> 상점 관리
 			</a></li>
 			<li class="admin-nav-item"><a href="javascript:void(0)"

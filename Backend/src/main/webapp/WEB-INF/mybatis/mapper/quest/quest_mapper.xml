@@ -56,14 +56,6 @@
         ORDER BY ql.VISIT_ORDER ASC
     </select>
 
-    <insert id="insertQuest" parameterType="Quest">
-        INSERT INTO LQ_QUEST (
-            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT, TIME_LIMIT, STATUS, CREATED_AT
-        ) VALUES (
-            SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}, #{timeLimit}, #{status}, SYSDATE
-        )
-    </insert>
-
     <update id="updateQuest" parameterType="Quest">
         UPDATE LQ_QUEST
         SET TITLE = #{title},
@@ -82,4 +74,31 @@
         WHERE QUEST_ID = #{questId}
     </update>
 
+	<insert id="insertQuest" parameterType="Quest">
+		INSERT INTO LQ_QUEST (
+		QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT
+		)
+		VALUES (
+		SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description},
+		#{category}, #{rewardExp}, #{rewardPoint}
+		)
+	</insert>
+
+	<select id="selectSearchQuests" parameterType="map"
+		resultType="Quest">
+		SELECT
+		QUEST_ID as questId, TITLE, DESCRIPTION, CATEGORY,
+		REWARD_EXP as rewardExp, REWARD_POINT as rewardPoint,
+		STATUS, CREATED_AT as createdAt
+		FROM LQ_QUEST
+		WHERE STATUS != 'DELETED'
+		<if test="status != null and status != ''">
+			AND STATUS = #{status}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY QUEST_ID DESC
+	</select>
+	
 </mapper>

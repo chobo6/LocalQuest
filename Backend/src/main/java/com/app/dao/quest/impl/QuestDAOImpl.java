@@ -48,4 +48,9 @@ public class QuestDAOImpl implements QuestDAO {
     public int updateQuestStatus(Map<String, Object> params) {
         return sqlSessionTemplate.update(NAMESPACE + ".updateQuestStatus", params);
     }
+    
+    @Override
+    public List<QuestDTO> selectSearchQuests(Map<String, Object> params) {
+        return sqlSessionTemplate.selectList(NAMESPACE + ".selectSearchQuests", params);
+    }
 }
