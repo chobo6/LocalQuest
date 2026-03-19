@@ -155,6 +155,54 @@
                 }
             });
         }
+        
+     // 모달 열기
+        function openQuestModal() {
+            $('#questModal').fadeIn(200);
+        }
+
+        // 모달 닫기
+        function closeQuestModal() {
+            $('#questModal').fadeOut(200);
+            $('#questForm')[0].reset(); // 입력값 초기화
+        }
+		
+        /**
+         * 퀘스트 등록 실행 함수
+         */
+        function submitQuest() {
+            // 폼 객체 가져오기 (이름으로 직접 접근하거나 ID 활용)
+            const form = $('#questForm')[0];
+            
+            // 유효성 검사 예시
+            if (!form.title.value.trim()) {
+                alert("퀘스트 제목을 입력해주세요.");
+                form.title.focus();
+                return;
+            }
+
+            const formData = $(form).serialize(); 
+
+            $.ajax({
+                url: ctx + "/admin/quests/register",
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.trim() === "success") {
+                        alert("새로운 퀘스트가 등록되었습니다.");
+                        closeQuestModal(); // 모달 닫기
+                        
+                        // 현재 탭(퀘스트 관리) 유지하며 리로드
+                        loadAdminContent(ctx + "/admin/quests");
+                    } else {
+                        alert("등록에 실패했습니다.");
+                    }
+                },
+                error: function() {
+                    alert("서버 통신 오류가 발생했습니다.");
+                }
+            });
+        }
     </script>
 </head>
 <body>

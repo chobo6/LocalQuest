@@ -138,17 +138,26 @@ public class AdminController {
         }
     }
 
-    /**
-     * 3. 퀘스트 등록 (관리자용)
-     * 실제 구현 시에는 등록 폼 페이지와 저장 로직을 분리하는 것이 좋습니다.
-     */
+    // 3. 퀘스트 등록 (관리자용)
     @PostMapping("/quests/register")
     @ResponseBody
-    public String registerQuest(QuestDTO quest) {
+    public String registerQuest(QuestDTO quest) { 
         try {
+            // 데이터가 잘 넘어오는지 서버 콘솔에서 확인 (디버깅용)
+            System.out.println(">>> 퀘스트 등록 요청 데이터: " + quest);
+            
+            // 필수값이 비어있는지 간단 체크 (서버 측 검증)
+            if (quest.getTitle() == null || quest.getTitle().trim().isEmpty()) {
+                return "fail:title_empty";
+            }
+
             boolean isRegistered = questService.registerQuest(quest);
+            
+            // 성공 시 반드시 "success"만 반환하도록 보장
             return isRegistered ? "success" : "fail";
+            
         } catch (Exception e) {
+            System.err.println("!!! 퀘스트 등록 중 에러 발생 !!!");
             e.printStackTrace();
             return "error";
         }

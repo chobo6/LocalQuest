@@ -30,7 +30,7 @@
         INSERT INTO LQ_QUEST (
             QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT
         ) VALUES (
-            SEQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}
+            SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}
         )
     </insert>
 

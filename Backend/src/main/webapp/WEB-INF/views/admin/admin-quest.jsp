@@ -51,3 +51,45 @@
         </c:forEach>
     </div>
 </div>
+
+<div id="questModal" class="adm-q-modal">
+    <div class="adm-q-modal-content">
+        <div class="adm-q-modal-header">
+            <h3><i class="fas fa-plus-circle"></i> 새 퀘스트 등록</h3>
+            <span class="close-modal" onclick="closeQuestModal()">&times;</span>
+        </div>
+        <form id="questForm">
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>퀘스트 제목</label>
+                    <input type="text" name="title" placeholder="퀘스트 제목을 입력하세요" required>
+                </div>
+                <div class="input-group">
+                    <label>카테고리</label>
+                    <select name="category">
+                        <option value="DAILY">DAILY</option>
+                        <option value="MAIN">MAIN</option>
+                        <option value="SUB">SUB</option>
+                        <option value="EVENT">EVENT</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>보상 경험치(EXP)</label>
+                    <input type="number" name="rewardExp" value="0" min="0">
+                </div>
+                <div class="input-group">
+                    <label>보상 포인트(PT)</label>
+                    <input type="number" name="rewardPoint" value="0" min="0">
+                </div>
+                <div class="input-group">
+                    <label>설명</label>
+                    <textarea name="description" rows="4" placeholder="퀘스트 상세 내용을 입력하세요" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeQuestModal()">취소</button>
+                <button type="button" class="btn-submit" onclick="submitQuest()">등록하기</button>
+            </div>
+        </form>
+    </div>
+</div>

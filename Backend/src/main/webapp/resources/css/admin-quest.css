@@ -143,3 +143,65 @@
     opacity: 0.6;
     filter: grayscale(0.5);
 }
+
+/* 모달 배경 */
+.adm-q-modal {
+    display: none; /* 기본 숨김 */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px); /* 배경 블러 처리 */
+}
+
+/* 모달 컨텐츠 */
+.adm-q-modal-content {
+    background-color: #252537;
+    margin: 10% auto;
+    padding: 0;
+    border: 1px solid #323248;
+    width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    color: #fff;
+}
+
+.adm-q-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #323248;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-modal {
+    font-size: 28px;
+    cursor: pointer;
+    color: #9292af;
+}
+
+.modal-body { padding: 20px; }
+
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; color: #9292af; font-size: 13px; }
+
+.input-group input, .input-group select, .input-group textarea {
+    width: 100%;
+    padding: 10px;
+    background: #1e1e2d;
+    border: 1px solid #323248;
+    border-radius: 6px;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #323248;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-submit { background: #7239ea; color: white; flex: 2; border: none; padding: 12px; border-radius: 6px; cursor: pointer; }
+.btn-cancel { background: #323248; color: #9292af; flex: 1; border: none; padding: 12px; border-radius: 6px; cursor: pointer; }
