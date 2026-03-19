@@ -134,6 +134,27 @@
                 }
             });
         }
+        
+        function updateQuestStatus(questId, status) {
+            const msg = status === 'DELETED' ? "정말 삭제하시겠습니까?" : `상태를 ${status}로 변경하시겠습니까?`;
+            
+            if (!confirm(msg)) return;
+
+            $.ajax({
+                url: ctx + "/admin/quests/updateStatus",
+                type: "POST",
+                data: { questId: questId, status: status },
+                success: function(res) {
+                    if (res === "success") {
+                        alert("반영되었습니다.");
+                        // 퀘스트 관리 페이지 다시 로드
+                        loadAdminContent(ctx + "/admin/quests");
+                    } else {
+                        alert("처리에 실패했습니다.");
+                    }
+                }
+            });
+        }
     </script>
 </head>
 <body>

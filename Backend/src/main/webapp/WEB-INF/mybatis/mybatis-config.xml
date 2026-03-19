@@ -12,6 +12,7 @@
 	
 	<typeAliases>
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
+		<typeAlias type="com.app.dto.quest.QuestDTO" alias="Quest"/>
 	</typeAliases>
 	
 </configuration>

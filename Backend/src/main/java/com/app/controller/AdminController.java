@@ -1,8 +1,6 @@
 package com.app.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.app.dto.quest.QuestDTO;
 import com.app.dto.user.User;
+import com.app.service.quest.QuestService;
 import com.app.service.user.UserService;
 
 @Controller
@@ -22,6 +22,9 @@ public class AdminController {
 	
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+    private QuestService questService;
 
 	// 관리자 메인 페이지
 	@GetMapping("")
@@ -103,4 +106,52 @@ public class AdminController {
             return "error";
         }
     }
+    
+    // ================ Quest ================
+    
+    /**
+     * 1. 퀘스트 관리 메인 페이지 (전체 목록 조회)
+     */
+    @GetMapping("/quests")
+    public String questList(Model model) {
+        List<QuestDTO> questList = questService.getAllQuests();
+        model.addAttribute("questList", questList);
+        
+        // admin/admin-quest.jsp로 이동
+        return "admin/admin-quest";
+    }
+
+    /**
+     * 2. 퀘스트 상태 변경 (비동기 처리)
+     * @param questId 변경할 퀘스트 번호
+     * @param status 변경할 상태 ('ACTIVE', 'INACTIVE', 'DELETED')
+     */
+    @PostMapping("/quests/updateStatus")
+    @ResponseBody
+    public String updateQuestStatus(@RequestParam int questId, @RequestParam String status) {
+        try {
+            boolean isUpdated = questService.changeQuestStatus(questId, status);
+            return isUpdated ? "success" : "fail";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    /**
+     * 3. 퀘스트 등록 (관리자용)
+     * 실제 구현 시에는 등록 폼 페이지와 저장 로직을 분리하는 것이 좋습니다.
+     */
+    @PostMapping("/quests/register")
+    @ResponseBody
+    public String registerQuest(QuestDTO quest) {
+        try {
+            boolean isRegistered = questService.registerQuest(quest);
+            return isRegistered ? "success" : "fail";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+    
 }

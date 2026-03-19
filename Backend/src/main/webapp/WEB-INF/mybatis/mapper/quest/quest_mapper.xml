@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="quest_mapper">
+
+	<select id="selectAllQuests" resultType="Quest">
+        SELECT 
+            QUEST_ID as questId,
+            TITLE, DESCRIPTION, CATEGORY,
+            REWARD_EXP as rewardExp,
+            REWARD_POINT as rewardPoint,
+            STATUS, CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE STATUS != 'DELETED'
+        ORDER BY QUEST_ID DESC
+    </select>
+
+    <select id="selectQuestById" parameterType="int" resultType="Quest">
+        SELECT 
+            QUEST_ID as questId, TITLE, DESCRIPTION, CATEGORY,
+            REWARD_EXP as rewardExp, REWARD_POINT as rewardPoint,
+            STATUS, CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE QUEST_ID = #{questId}
+    </select>
+
+    <insert id="insertQuest" parameterType="Quest">
+        INSERT INTO LQ_QUEST (
+            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT
+        ) VALUES (
+            SEQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}
+        )
+    </insert>
+
+    <update id="updateQuestStatus" parameterType="map">
+        UPDATE LQ_QUEST 
+        SET STATUS = #{status}
+        WHERE QUEST_ID = #{questId}
+    </update>
+    
+</mapper>

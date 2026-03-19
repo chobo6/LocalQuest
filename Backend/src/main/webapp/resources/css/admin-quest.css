@@ -1,0 +1,145 @@
+@charset "UTF-8";
+
+/* 전체 컨테이너 배경 및 폰트 설정 */
+.adm-q-container {
+    padding: 20px;
+    background-color: #1a1a27; /* 관리자 페이지 특유의 어두운 배경 */
+    min-height: 100vh;
+    color: #ffffff;
+}
+
+.adm-q-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.adm-q-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* 그리드 레이아웃: 정확히 4개씩 배치 */
+.adm-q-grid {
+    display: grid;
+    /* 1fr씩 4등분, 간격은 20px */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
+    padding: 10px 0;
+}
+
+/* 퀘스트 카드 스타일 */
+.adm-q-card {
+    background: #252537; /* 카드 다크 배경 */
+    border-radius: 12px;
+    border: 1px solid #323248;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.adm-q-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    border-color: #7239ea; /* 호버 시 포인트 컬러 */
+}
+
+/* 카드 상단 헤더 */
+.adm-q-card-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(114, 57, 234, 0.1); /* 미세한 보라색 광택 */
+}
+
+.adm-q-category {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #7239ea;
+    font-weight: bold;
+}
+
+.adm-q-status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #1e1e2d;
+}
+
+/* 카드 본문 */
+.adm-q-card-body {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.adm-q-card-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.adm-q-card-desc {
+    font-size: 14px;
+    color: #9292af; /* 흐릿한 텍스트 */
+    line-height: 1.5;
+}
+
+/* 보상 영역 */
+.adm-q-reward {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px;
+    background: #1e1e2d;
+    border-top: 1px solid #323248;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.exp-icon { color: #0095ff; }
+.point-icon { color: #ffa800; }
+
+/* 카드 하단 버튼 영역 */
+.adm-q-card-footer {
+    display: flex;
+    background: #2b2b40;
+}
+
+.adm-q-card-footer button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    color: #9292af;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.adm-q-card-footer button:hover {
+    background: #323248;
+    color: #ffffff;
+}
+
+/* 특정 버튼 강조 */
+.btn-q-stop:hover { color: #f1416c !important; } /* 정지: 빨강 */
+.btn-q-start:hover { color: #50cd89 !important; } /* 활성화: 초록 */
+.btn-q-delete:hover { background: #f1416c !important; color: #fff !important; }
+
+/* 비활성화 카드 상태 */
+.adm-q-card.INACTIVE {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
