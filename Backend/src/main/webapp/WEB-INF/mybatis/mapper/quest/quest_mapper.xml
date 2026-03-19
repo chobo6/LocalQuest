@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+           "-//mybatis.org//DTD Mapper 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="quest_mapper">
+
+    <select id="selectAllQuests" resultType="Quest">
+        SELECT
+            QUEST_ID as questId,
+            TITLE,
+            DESCRIPTION,
+            CATEGORY,
+            REWARD_EXP as rewardExp,
+            REWARD_POINT as rewardPoint,
+            STATUS,
+            CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE STATUS != 'DELETED'
+        ORDER BY QUEST_ID DESC
+    </select>
+
+    <select id="selectQuestById" parameterType="int" resultType="Quest">
+        SELECT
+            QUEST_ID as questId,
+            TITLE,
+            DESCRIPTION,
+            CATEGORY,
+            REWARD_EXP as rewardExp,
+            REWARD_POINT as rewardPoint,
+            STATUS,
+            CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE QUEST_ID = #{questId}
+    </select>
+
+    <select id="selectQuestLocationsByQuestId" parameterType="int" resultType="QuestLocationInfoDTO">
+        SELECT
+            ql.QUEST_LOCATION_ID as questLocationId,
+            ql.LOCATION_ID as locationId,
+            ql.VISIT_ORDER as visitOrder,
+            l.NAME as name,
+            l.ZIP_CODE as zipCode,
+            l.ADDRESS as address,
+            l.ADDRESS_DETAIL as addressDetail,
+            l.LATITUDE as latitude,
+            l.LONGITUDE as longitude,
+            l.LOCATION_TYPE as locationType,
+            l.DESCRIPTION as description
+        FROM LQ_QUEST_LOCATION ql
+        INNER JOIN LQ_LOCATION l
+            ON ql.LOCATION_ID = l.LOCATION_ID
+        WHERE ql.QUEST_ID = #{questId}
+        ORDER BY ql.VISIT_ORDER ASC
+    </select>
+
+    <insert id="insertQuest" parameterType="Quest">
+        INSERT INTO LQ_QUEST (
+            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT, STATUS, CREATED_AT
+        ) VALUES (
+            SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}, #{status}, SYSDATE
+        )
+    </insert>
+
+    <update id="updateQuest" parameterType="Quest">
+        UPDATE LQ_QUEST
+        SET TITLE = #{title},
+            DESCRIPTION = #{description},
+            CATEGORY = #{category},
+            REWARD_EXP = #{rewardExp},
+            REWARD_POINT = #{rewardPoint},
+            STATUS = #{status}
+        WHERE QUEST_ID = #{questId}
+    </update>
+
+    <update id="updateQuestStatus" parameterType="map">
+        UPDATE LQ_QUEST
+        SET STATUS = #{status}
+        WHERE QUEST_ID = #{questId}
+    </update>
+
+</mapper>

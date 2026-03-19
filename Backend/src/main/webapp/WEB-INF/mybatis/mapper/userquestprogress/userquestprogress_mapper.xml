@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="userquestprogress_mapper">
+	<insert id="saveUserQuestProgress" parameterType="UserQuestProgressDTO">
+		INSERT INTO LQ_USER_QUEST_PROGRESS (
+		user_quest_progress_id,
+		user_quest_id,
+		quest_location_id,
+		is_completed,
+		completed_at
+		) VALUES (
+		SEQ_LQ_USER_QUEST_PROGRESS_PK.nextval,
+		#{userQuestId},
+		#{questLocationId},
+		#{isCompleted},
+		#{completedAt} )
+	</insert>
+</mapper>
