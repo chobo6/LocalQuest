@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="quest_mapper">
+	<select id="findAll" resultType="QuestDTO">
+		SELECT
+			quest_id,
+			title,
+			description,
+			category,
+			reward_exp,
+			reward_point,
+			status,
+			created_at
+		FROM LQ_QUEST
+		WHERE status != 'DELETED'
+		ORDER BY quest_id DESC
+	</select>
+
+	<select id="findById" parameterType="int" resultType="QuestDTO">
+		SELECT
+			quest_id,
+			title,
+			description,
+			category,
+			reward_exp,
+			reward_point,
+			status,
+			created_at
+		FROM LQ_QUEST
+		WHERE quest_id = #{questId}
+		AND status != 'DELETED'
+	</select>
+
+	<insert id="saveQuest" parameterType="QuestDTO">
+		INSERT INTO LQ_QUEST (
+		quest_id,
+		title,
+		description,
+		category,
+		reward_exp,
+		reward_point,
+		status,
+		created_at
+		) VALUES (
+		SEQ_LQ_QUEST_PK.nextval,
+		#{title},
+		#{description},
+		#{category},
+		#{rewardExp},
+		#{rewardPoint},
+		#{status},
+		sysdate )
+	</insert>
+</mapper>
