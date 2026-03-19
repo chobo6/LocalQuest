@@ -11,9 +11,9 @@ const toQuestCardModel = (quest) => ({
   title: quest.title,
   description: quest.description,
   category: quest.category,
-  difficulty: quest.rewardExp >= 300 ? 'Hard' : quest.rewardExp >= 180 ? 'Normal' : 'Easy',
-  location: 'Location info coming soon',
-  duration: `${Math.max(30, Math.round(quest.rewardExp / 2))} min`,
+  difficulty: quest.rewardExp >= 300 ? '어려움' : quest.rewardExp >= 180 ? '보통' : '쉬움',
+  location: '지역 정보 준비 중',
+  duration: `${Math.max(30, Math.round(quest.rewardExp / 2))}분`,
   reward: `${quest.rewardPoint}P`,
   status: quest.status,
 });
@@ -21,7 +21,7 @@ const toQuestCardModel = (quest) => ({
 function QuestList() {
   const navigate = useNavigate();
   const [questList, setQuestList] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [selectedFilter, setSelectedFilter] = useState('전체');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -32,7 +32,7 @@ function QuestList() {
         const response = await questApi.getQuestList();
         setQuestList((response.data || []).map(toQuestCardModel));
       } catch (err) {
-        setError('Failed to load quest list.');
+        setError('퀘스트 목록을 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -41,9 +41,9 @@ function QuestList() {
     fetchQuestList();
   }, []);
 
-  const filterOptions = ['All', ...new Set(questList.map((quest) => quest.category))];
+  const filterOptions = ['전체', ...new Set(questList.map((quest) => quest.category))];
   const filteredQuestList =
-    selectedFilter === 'All'
+    selectedFilter === '전체'
       ? questList
       : questList.filter((quest) => quest.category === selectedFilter);
 
@@ -55,21 +55,21 @@ function QuestList() {
         <section className="quest-list-hero">
           <div className="quest-list-hero-copy">
             <span className="quest-list-eyebrow">QUEST BOARD</span>
-            <h1>Browse local quests available right now.</h1>
-            <p>Each item is loaded from the backend JSON that matches the quest DTO shape.</p>
+            <h1>지금 참여할 수 있는 로컬 퀘스트를 확인해보세요.</h1>
+            <p>백엔드에서 내려오는 퀘스트 데이터를 기준으로 목록을 보여줍니다.</p>
           </div>
 
           <div className="quest-list-summary-card">
             <strong>{filteredQuestList.length}</strong>
-            <span>Available quests</span>
-            <p>Filter by category and open a detail page backed by the same API contract.</p>
+            <span>진행 가능한 퀘스트</span>
+            <p>카테고리별로 필터링하고 상세 페이지까지 바로 확인할 수 있습니다.</p>
           </div>
         </section>
 
         <section className="quest-list-toolbar">
           <div>
-            <h2>{selectedFilter === 'All' ? 'All Quests' : `${selectedFilter} Quests`}</h2>
-            <p>Categories are generated from backend data.</p>
+            <h2>{selectedFilter === '전체' ? '전체 퀘스트' : `${selectedFilter} 퀘스트`}</h2>
+            <p>카테고리 목록도 백엔드 데이터 기준으로 생성됩니다.</p>
           </div>
           <div className="quest-list-filters">
             {filterOptions.map((filter) => (
@@ -88,7 +88,7 @@ function QuestList() {
         <section className="quest-list-grid">
           {loading ? (
             <div className="quest-list-empty">
-              <h3>Loading quests...</h3>
+              <h3>퀘스트를 불러오는 중입니다.</h3>
             </div>
           ) : error ? (
             <div className="quest-list-empty">
@@ -104,8 +104,8 @@ function QuestList() {
             ))
           ) : (
             <div className="quest-list-empty">
-              <h3>No quests found for this category.</h3>
-              <p>Try another filter.</p>
+              <h3>선택한 카테고리에 해당하는 퀘스트가 없습니다.</h3>
+              <p>다른 필터를 선택해서 다시 확인해보세요.</p>
             </div>
           )}
         </section>

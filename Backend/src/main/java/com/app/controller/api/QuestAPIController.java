@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.quest.QuestDetailDTO;
 import com.app.service.quest.QuestService;
 
 @RestController
@@ -21,12 +22,12 @@ public class QuestAPIController {
 
     @GetMapping
     public ResponseEntity<List<QuestDTO>> getQuestList() {
-        return ResponseEntity.ok(questService.getQuestList());
+        return ResponseEntity.ok(questService.getAllQuests());
     }
 
     @GetMapping("/{questId}")
     public ResponseEntity<?> getQuestDetail(@PathVariable int questId) {
-        QuestDTO quest = questService.getQuestById(questId);
+        QuestDetailDTO quest = questService.getQuestDetailById(questId);
         if (quest == null) {
             return ResponseEntity.notFound().build();
         }

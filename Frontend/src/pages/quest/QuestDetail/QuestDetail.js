@@ -5,20 +5,31 @@ import Footer from '../../../components/common/Footer';
 import { questApi } from '../../../api/QuestApi';
 import './QuestDetail.css';
 
-const toQuestDetailModel = (quest) => ({
-  title: quest.title,
-  category: quest.category,
-  difficulty: quest.rewardExp >= 300 ? 'Hard' : quest.rewardExp >= 180 ? 'Normal' : 'Easy',
-  location: 'Location info coming soon',
-  duration: `${Math.max(30, Math.round(quest.rewardExp / 2))} min`,
-  reward: `${quest.rewardPoint}P`,
-  description: quest.description,
-  steps: [
-    `Visit a place in the ${quest.category} category`,
-    'Complete the on-site mission or check-in',
-    `Finish and receive ${quest.rewardPoint}P`,
-  ],
-});
+const getDifficultyText = (rewardExp) => {
+  if (rewardExp >= 300) return '어려움';
+  if (rewardExp >= 180) return '보통';
+  return '쉬움';
+};
+
+const toQuestDetailModel = (quest) => {
+  const locations = Array.isArray(quest.locations)
+    ? [...quest.locations].sort((a, b) => (a.visitOrder || 0) - (b.visitOrder || 0))
+    : [];
+
+  return {
+    title: quest.title,
+    category: quest.category,
+    difficulty: getDifficultyText(quest.rewardExp),
+    locationSummary:
+      locations.length > 0
+        ? locations.map((location) => location.name).join(', ')
+        : '지정된 장소 정보가 없습니다.',
+    duration: `${Math.max(30, Math.round((quest.rewardExp || 0) / 2))}분`,
+    reward: `${quest.rewardPoint}P`,
+    description: quest.description,
+    locations,
+  };
+};
 
 function QuestDetail() {
   const navigate = useNavigate();
@@ -34,7 +45,7 @@ function QuestDetail() {
         const response = await questApi.getQuestDetail(questId);
         setQuest(toQuestDetailModel(response.data));
       } catch (err) {
-        setError('Quest not found.');
+        setError('퀘스트를 찾을 수 없습니다.');
       } finally {
         setLoading(false);
       }
@@ -49,12 +60,12 @@ function QuestDetail() {
 
       <main className="quest-detail-main">
         <button type="button" className="quest-detail-back" onClick={() => navigate('/explore')}>
-          Back to list
+          목록으로 돌아가기
         </button>
 
         {loading ? (
           <section className="quest-detail-empty">
-            <h1>Loading quest...</h1>
+            <h1>퀘스트를 불러오는 중입니다.</h1>
           </section>
         ) : quest ? (
           <section className="quest-detail-card">
@@ -66,38 +77,55 @@ function QuestDetail() {
               </div>
               <div className="quest-detail-summary">
                 <strong>{quest.reward}</strong>
-                <span>Reward</span>
+                <span>보상</span>
               </div>
             </div>
 
             <div className="quest-detail-meta">
               <article>
-                <span>Difficulty</span>
+                <span>난이도</span>
                 <strong>{quest.difficulty}</strong>
               </article>
               <article>
-                <span>Location</span>
-                <strong>{quest.location}</strong>
+                <span>포함 장소</span>
+                <strong>{quest.locationSummary}</strong>
               </article>
               <article>
-                <span>Expected time</span>
+                <span>예상 시간</span>
                 <strong>{quest.duration}</strong>
               </article>
             </div>
 
             <div className="quest-detail-steps">
-              <h2>How it works</h2>
-              <ol>
-                {quest.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
+              <h2>방문 순서</h2>
+              {quest.locations.length > 0 ? (
+                <div className="quest-detail-location-list">
+                  {quest.locations.map((location) => (
+                    <article
+                      key={location.questLocationId || location.locationId}
+                      className="quest-detail-location-item"
+                    >
+                      <div className="quest-detail-location-order">{location.visitOrder}</div>
+                      <div className="quest-detail-location-body">
+                        <h3>{location.name}</h3>
+                        {location.address && <p>{location.address}</p>}
+                        {location.addressDetail && <p>{location.addressDetail}</p>}
+                        {location.description && (
+                          <span className="quest-detail-location-note">{location.description}</span>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="quest-detail-empty-copy">아직 연결된 로케이션이 없습니다.</p>
+              )}
             </div>
           </section>
         ) : (
           <section className="quest-detail-empty">
-            <h1>{error || 'Quest not found.'}</h1>
-            <p>Please go back and choose another quest.</p>
+            <h1>{error || '퀘스트를 찾을 수 없습니다.'}</h1>
+            <p>목록으로 돌아가 다른 퀘스트를 선택해주세요.</p>
           </section>
         )}
       </main>

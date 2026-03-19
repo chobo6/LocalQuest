@@ -9,14 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import com.app.dao.quest.QuestDAO;
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.quest.QuestLocationInfoDTO;
 
 @Repository
-public class QuestDAOImpl implements QuestDAO{
+public class QuestDAOImpl implements QuestDAO {
 
-	@Autowired
-	SqlSessionTemplate sqlSessionTemplate;
-	
-	// 매퍼 파일의 namespace와 일치해야 합니다.
+    @Autowired
+    SqlSessionTemplate sqlSessionTemplate;
+
     private static final String NAMESPACE = "quest_mapper";
 
     @Override
@@ -27,6 +27,11 @@ public class QuestDAOImpl implements QuestDAO{
     @Override
     public QuestDTO selectQuestById(int questId) {
         return sqlSessionTemplate.selectOne(NAMESPACE + ".selectQuestById", questId);
+    }
+
+    @Override
+    public List<QuestLocationInfoDTO> selectQuestLocationsByQuestId(int questId) {
+        return sqlSessionTemplate.selectList(NAMESPACE + ".selectQuestLocationsByQuestId", questId);
     }
 
     @Override

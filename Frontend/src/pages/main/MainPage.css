@@ -1,7 +1,12 @@
+.main-page-shell {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
 .main-page {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 56px 28px 80px;
+  padding: 170px 28px 80px;
 }
 
 .hero-map-section,
@@ -332,7 +337,7 @@
 
 @media (max-width: 900px) {
   .main-page {
-    padding: 40px 18px 64px;
+    padding: 150px 18px 64px;
   }
 
   .hero-copy {

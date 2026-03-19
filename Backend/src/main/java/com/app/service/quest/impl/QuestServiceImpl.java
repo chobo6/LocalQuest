@@ -9,12 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.app.dao.quest.QuestDAO;
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.quest.QuestDetailDTO;
 import com.app.service.quest.QuestService;
 
 @Service
-public class QuestServiceImpl implements QuestService{
+public class QuestServiceImpl implements QuestService {
 
-	@Autowired
+    @Autowired
     private QuestDAO questDAO;
 
     @Override
@@ -28,8 +29,28 @@ public class QuestServiceImpl implements QuestService{
     }
 
     @Override
+    public QuestDetailDTO getQuestDetailById(int questId) {
+        QuestDTO quest = questDAO.selectQuestById(questId);
+        if (quest == null) {
+            return null;
+        }
+
+        QuestDetailDTO questDetail = new QuestDetailDTO();
+        questDetail.setQuestId(quest.getQuestId());
+        questDetail.setTitle(quest.getTitle());
+        questDetail.setDescription(quest.getDescription());
+        questDetail.setCategory(quest.getCategory());
+        questDetail.setRewardExp(quest.getRewardExp());
+        questDetail.setRewardPoint(quest.getRewardPoint());
+        questDetail.setStatus(quest.getStatus());
+        questDetail.setCreatedAt(quest.getCreatedAt());
+        questDetail.setLocations(questDAO.selectQuestLocationsByQuestId(questId));
+
+        return questDetail;
+    }
+
+    @Override
     public boolean registerQuest(QuestDTO quest) {
-        // 등록 성공 시 1이 반환되므로 비교 연산으로 결과 반환
         return questDAO.insertQuest(quest) == 1;
     }
 
@@ -40,11 +61,9 @@ public class QuestServiceImpl implements QuestService{
 
     @Override
     public boolean changeQuestStatus(int questId, String status) {
-        // DAO에 넘길 파라미터 조립 (Map 활용)
         Map<String, Object> params = new HashMap<>();
         params.put("questId", questId);
-        params.put("status", status); // 'ACTIVE', 'INACTIVE', 'DELETED'
-        
+        params.put("status", status);
         return questDAO.updateQuestStatus(params) == 1;
     }
 }
