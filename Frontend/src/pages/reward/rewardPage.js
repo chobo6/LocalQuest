@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { rewardApi } from "../../api/RewardApi";
 import "./rewardPage.css";
 
@@ -36,10 +37,6 @@ const STATUS_TABS = [
   { id: "SOLD_OUT", label: "품절" },
 ];
 
-const RANKING_API_PATHS = [
-  "/api/rankings"
-].filter(Boolean);
-
 const DEFAULT_WEEKLY_STATS = {
   questDone: 0,
   gainXp: 0,
@@ -48,7 +45,7 @@ const DEFAULT_WEEKLY_STATS = {
   weeklyProgress: 0,
 };
 
-function resolveNicknameFromClient() {
+function resolveNicknameFromClient(authNickname = "") {
   if (typeof window === "undefined") {
     return "";
   }
@@ -58,11 +55,28 @@ function resolveNicknameFromClient() {
     return queryNickname.trim();
   }
 
+  if (authNickname && authNickname.trim()) {
+    return authNickname.trim();
+  }
+
   const storageKeys = ["lq_nickname", "nickname", "userNickname"];
   for (const key of storageKeys) {
     const storedValue = window.localStorage.getItem(key);
     if (storedValue && storedValue.trim()) {
       return storedValue.trim();
+    }
+  }
+
+  const rawAuth = window.localStorage.getItem("lq_auth");
+  if (rawAuth) {
+    try {
+      const parsedAuth = JSON.parse(rawAuth);
+      const nestedNickname = parsedAuth?.user?.nickname ?? parsedAuth?.nickname;
+      if (nestedNickname && String(nestedNickname).trim()) {
+        return String(nestedNickname).trim();
+      }
+    } catch {
+      // ignore malformed local storage payload
     }
   }
 
@@ -225,31 +239,13 @@ function toRankingRow(row) {
   };
 }
 
-async function fetchRankingList() {
-  let lastError;
-
-  for (const endpoint of RANKING_API_PATHS) {
-    try {
-      const response = await fetch(endpoint);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch rankings: ${endpoint} (${response.status})`);
-      }
-
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error(`Invalid ranking payload from ${endpoint}`);
-      }
-
-      return data;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError ?? new Error("No ranking endpoint available");
-}
-
 function RewardPage() {
+  const authNickname = useSelector((state) => state.auth?.user?.nickname ?? "");
+  const resolvedNickname = useMemo(
+    () => resolveNicknameFromClient(authNickname),
+    [authNickname],
+  );
+
   const [levelBox, setLevelBox] = useState(null);
   const [isLevelBoxLoading, setIsLevelBoxLoading] = useState(true);
   const [points, setPoints] = useState(0);
@@ -294,7 +290,7 @@ function RewardPage() {
           setIsLevelBoxLoading(true);
         }
 
-        const nickname = resolveNicknameFromClient();
+        const nickname = resolvedNickname;
         if (!nickname) {
           if (isMounted) {
             setLevelBox(null);
@@ -370,7 +366,7 @@ function RewardPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [resolvedNickname]);
 
   useEffect(() => {
     let isMounted = true;
@@ -381,7 +377,7 @@ function RewardPage() {
           setIsWalletLoading(true);
         }
 
-        const nickname = resolveNicknameFromClient();
+        const nickname = resolvedNickname;
         if (!nickname) {
           if (isMounted) {
             setWallet([]);
@@ -427,7 +423,7 @@ function RewardPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [resolvedNickname]);
 
   useEffect(() => {
     let isMounted = true;
@@ -470,7 +466,7 @@ function RewardPage() {
 
     const loadWeeklyStats = async () => {
       try {
-        const nickname = resolveNicknameFromClient();
+        const nickname = resolvedNickname;
         if (!nickname) {
           if (isMounted) {
             setWeeklyStats(DEFAULT_WEEKLY_STATS);
@@ -497,14 +493,15 @@ function RewardPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [resolvedNickname]);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadRankings = async () => {
       try {
-        const rankingList = await fetchRankingList();
+        const response = await rewardApi.getRankings();
+        const rankingList = Array.isArray(response?.data) ? response.data : [];
         const mapped = rankingList
           .map(toRankingRow)
           .filter((row) => row.rank > 0)
@@ -516,7 +513,7 @@ function RewardPage() {
 
         setRankingList(mapped);
 
-        const myNickname = levelBox?.nickname?.trim();
+        const myNickname = levelBox?.nickname?.trim() || resolvedNickname;
         const myRow = mapped.find((row) => (
           row.isMe
           || row.name.includes("(나)")
@@ -546,7 +543,7 @@ function RewardPage() {
       isMounted = false;
       window.clearInterval(timerId);
     };
-  }, [levelBox?.nickname]);
+  }, [levelBox?.nickname, resolvedNickname]);
 
   const visibleItems = useMemo(() => {
     const filtered = rewardItems.filter((item) => {

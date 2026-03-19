@@ -31,4 +31,8 @@ export const rewardApi = {
 
     return api.get("/api/rewards/weekly", { params });
   },
+
+  getRankings: () => {
+    return api.get("/api/rankings");
+  },
 };

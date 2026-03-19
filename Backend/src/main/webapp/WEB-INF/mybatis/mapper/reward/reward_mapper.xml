@@ -105,7 +105,7 @@
 					FLOOR(NVL(U.EXP, 0) / 500) + 1
 				) AS CURRENT_LEVEL
 			FROM LQ_USER U
-			WHERE U.STATUS = 'ACTIVE'
+			WHERE UPPER(NVL(U.STATUS, 'ACTIVE')) = 'ACTIVE'
 			<if test="_parameter != null and _parameter != ''">
 				AND U.NICKNAME = #{_parameter}
 			</if>
@@ -188,12 +188,17 @@
 					FROM (
 						SELECT
 							X.RN AS MY_RANK,
-							(SELECT COUNT(*) FROM LQ_USER_RANK) AS TOTAL_COUNT
+							(
+								SELECT COUNT(*)
+								FROM LQ_USER RU
+								WHERE UPPER(NVL(RU.STATUS, 'ACTIVE')) = 'ACTIVE'
+							) AS TOTAL_COUNT
 						FROM (
 							SELECT
 								UR.NICKNAME,
-								ROW_NUMBER() OVER (ORDER BY UR.TOTAL_EXP DESC, UR.RANK_ID ASC) AS RN
-							FROM LQ_USER_RANK UR
+								ROW_NUMBER() OVER (ORDER BY NVL(UR.EXP, 0) DESC, UR.USER_ID ASC) AS RN
+							FROM LQ_USER UR
+							WHERE UPPER(NVL(UR.STATUS, 'ACTIVE')) = 'ACTIVE'
 						) X
 						WHERE X.NICKNAME = U.NICKNAME
 					) R
@@ -202,7 +207,7 @@
 			) AS TOP_PERCENT,
 			0 AS WEEKLY_PROGRESS
 		FROM LQ_USER U
-		WHERE U.STATUS = 'ACTIVE'
+		WHERE UPPER(NVL(U.STATUS, 'ACTIVE')) = 'ACTIVE'
 		  AND U.NICKNAME = #{_parameter}
 		  AND ROWNUM = 1
 	</select>
@@ -223,7 +228,7 @@
 			ON U.USER_ID = RE.USER_ID
 		INNER JOIN LQ_REWARD_ITEM RI
 			ON RI.REWARD_ITEM_ID = RE.REWARD_ITEM_ID
-		WHERE U.STATUS = 'ACTIVE'
+		WHERE UPPER(NVL(U.STATUS, 'ACTIVE')) = 'ACTIVE'
 		<if test="_parameter != null and _parameter != ''">
 			AND U.NICKNAME = #{_parameter}
 		</if>
