@@ -6,10 +6,7 @@ function LocalQuestLogo({ className = '' }) {
   return (
     <div className={`lq-logo ${className}`.trim()}>
       <img src={logoIcon} alt="LOCAL QUEST" className="lq-logo-icon" />
-      <div className="lq-logo-wordmark" aria-label="LOCAL QUEST">
-        <span className="lq-logo-local">LOCAL</span>
-        <span className="lq-logo-quest">QUEST</span>
-      </div>
+      <span className="lq-logo-text" aria-label="LOCAL QUEST">LOCAL QUEST</span>
     </div>
   );
 }

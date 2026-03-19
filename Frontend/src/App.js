@@ -9,6 +9,7 @@ import MainPage from './pages/main/MainPage';
 import QuestList from './pages/quest/QuestList/QuestList';
 import QuestDetail from './pages/quest/QuestDetail/QuestDetail';
 import MyQuest from './pages/quest/MyQuest/MyQuest';
+import RewardPage from './pages/reward/rewardPage';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 
@@ -35,6 +36,7 @@ function AppRoutes({ isAuthenticated }) {
         <Route path="/explore" element={<QuestList />} />
         <Route path="/explore/:questId" element={<QuestDetail />} />
         <Route path="/quest" element={<MyQuest />} />
+        <Route path="/reward" element={<RewardPage />} />
         <Route
           path="/"
           element={<Navigate to="/main" replace />}

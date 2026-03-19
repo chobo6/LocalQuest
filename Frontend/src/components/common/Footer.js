@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MdLocationOn } from 'react-icons/md';
+import LocalQuestLogo from './LocalQuestLogo';
 import { TERMS } from '../../data/termsData';
 import './Footer.css';
 
@@ -35,8 +35,7 @@ const Footer = () => {
         <div className="footer-inner-content">
           <div className="footer-brand-section">
             <div className="footer-logo-box">
-              <MdLocationOn className="footer-logo-icon" size={24} color="#D93D5E" />
-              <span className="footer-logo-text">LOCAL QUEST</span>
+              <LocalQuestLogo className="footer-localquest-logo" />
             </div>
             <p className="footer-brand-desc">
               지역을 게임처럼 탐험하는<br />

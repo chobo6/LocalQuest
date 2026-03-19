@@ -645,36 +645,7 @@ function RewardPage() {
 
   return (
     <div className="reward-page">
-      <header className="reward-header">
-        <div className="reward-header-inner">
-          <div className="reward-brand-wrap">
-            <div className="reward-brand-logo">📍</div>
-            <span className="reward-brand-text">Local Quest</span>
-          </div>
-
-          <nav className="reward-nav" aria-label="상단 내비게이션">
-            <button type="button" className="reward-nav-link">탐색 및 지도</button>
-            <button type="button" className="reward-nav-link">내 퀘스트</button>
-            <button type="button" className="reward-nav-link reward-is-active">성장 및 보상</button>
-            <button type="button" className="reward-nav-link">마이페이지</button>
-          </nav>
-
-          <div className="reward-header-actions">
-            <button type="button" className="reward-icon-button" aria-label="알림">
-              🔔
-              <span className="reward-dot" aria-hidden="true" />
-            </button>
-            <div className="reward-profile-mini" aria-hidden="true">🏃</div>
-          </div>
-        </div>
-      </header>
-
       <main className="reward-main">
-        <section className="reward-page-title-block">
-          <h1 className="reward-page-title">성장 & 보상</h1>
-          <p className="reward-page-subtitle">퀘스트를 완료하고 혜택을 받아보세요</p>
-        </section>
-
         <section className="reward-top-grid">
           <div className="reward-left-column">
             {isLevelBoxLoading ? (
