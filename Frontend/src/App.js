@@ -1,20 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/auth/login/Login';
-import SignUp from './pages/auth/signup/SignUp';
-import Terms from './pages/auth/signup/Terms';
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
+import CustomerService from './pages/support/CustomerService';
+import MainPage from './pages/main/MainPage';
+import './App.css';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/terms" element={<Terms />} />
-        {/* 기본 경로 설정 */}
-        <Route path="/" element={<Login />} />
-      </Routes>
+      <div className="app-shell">
+        <Header />
+
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/support" element={<CustomerService />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
     </Router>
   );
 }
