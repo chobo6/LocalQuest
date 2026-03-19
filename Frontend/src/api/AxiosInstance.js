@@ -27,12 +27,12 @@ api.interceptors.response.use(
         const requestUrl = error.config?.url || '';
         const isLoginRequest = requestUrl.includes('/api/users/login');
 
-        // 예: 401 에러(권한 없음) 발생 시 로그인 페이지로 리다이렉트 하는 공통 로직
+        // 예: 401 에러(권한 없음) 발생 시 비로그인 기본 페이지로 리다이렉트 하는 공통 로직
         if (error.response && error.response.status === 401 && !isLoginRequest) {
             localStorage.removeItem(TOKEN_STORAGE_KEY);
             localStorage.removeItem(AUTH_STORAGE_KEY);
             alert("세션이 만료되었습니다.");
-            window.location.href = '/login';
+            window.location.href = '/main';
         }
         return Promise.reject(error);
     }

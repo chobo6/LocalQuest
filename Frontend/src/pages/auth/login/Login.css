@@ -24,11 +24,16 @@
 
 /* 페이지 제목 */
 .login-title {
-    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 30px;
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
+}
+
+.login-logo-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* 아이디 저장 체크박스 영역 */

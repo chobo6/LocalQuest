@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MdLocationOn } from 'react-icons/md';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { clearAuth } from '../../store/authSlice';
+import LocalQuestLogo from './LocalQuestLogo';
 import './Header.css';
 
 const Header = () => {
-  const [userRole, setUserRole] = useState('GUEST');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const user = useSelector((state) => state.auth.user);
+
+  const userRole = user?.role ?? 'GUEST';
+  const displayName =
+    user?.nickname ?? user?.name ?? user?.userLoginId ?? user?.userId ?? '사용자';
+
+  const handleLogout = () => {
+    dispatch(clearAuth());
+    navigate('/main', { replace: true });
+  };
 
   return (
     <div>
@@ -13,22 +27,19 @@ const Header = () => {
         <div className="header-top-section">
           <div className="header-inner"> {/* 중앙 정렬을 위한 이너 박스 추가 */}
             <Link to="/" className="header-logo-link">
-              <div className="header-logo-wrapper">
-                <MdLocationOn className="header-logo-icon" size={28} color="#D93D5E" />
-                <span className="header-logo-text">LOCAL QUEST</span>
-              </div>
+              <LocalQuestLogo />
             </Link>
 
             <div className="header-utility-btns">
-              {userRole === 'GUEST' ? (
+              {!isAuthenticated ? (
                 <>
-                  <button className="header-auth-btn" onClick={() => setUserRole('USER')}>로그인</button>
-                  <button className="header-signup-btn">회원가입</button>
+                  <Link to="/login" className="header-auth-btn">로그인</Link>
+                  <Link to="/terms" className="header-signup-btn">회원가입</Link>
                 </>
               ) : (
                 <>
-                  <span className="header-user-info">[{userRole}]님</span>
-                  <button className="header-auth-btn" onClick={() => setUserRole('GUEST')}>로그아웃</button>
+                  <span className="header-user-info">{displayName}님</span>
+                  <button className="header-auth-btn" onClick={handleLogout}>로그아웃</button>
                 </>
               )}
             </div>
@@ -61,7 +72,7 @@ const Header = () => {
                 </li>
               )}
 
-              {userRole !== 'GUEST' && (
+              {isAuthenticated && (
                 <li className="header-nav-item">
                   <Link to="/mypage" className="header-nav-link">마이페이지</Link>
                 </li>

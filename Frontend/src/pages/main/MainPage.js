@@ -1,10 +1,5 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import Button from '../../components/common/Button';
-import { clearAuth } from '../../store/authSlice';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
 import './MainPage.css';
 
 
@@ -25,11 +20,6 @@ import './MainPage.css';
 
       return window.localStorage.getItem(LOCATION_CONSENT_KEY) === 'granted';
     });
-      const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
-
-
   const hotQuestData = [
     {
       id: 1,
@@ -50,12 +40,6 @@ import './MainPage.css';
       description: '천안 대표 역사 명소를 중심으로 둘러보며 수행하는 기록형 퀘스트입니다.'
     }
   ];
-  const handleLogout = () => {
-    dispatch(clearAuth());
-    navigate('/login');
-  };
-
-
     const [showConsentModal, setShowConsentModal] = useState(false);
     const [showMapDetailModal, setShowMapDetailModal] = useState(false);
     const [selectedMapInfo, setSelectedMapInfo] = useState(null);

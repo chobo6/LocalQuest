@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import './Login.css';
 import Button from '../../../components/common/Button'; // 경로 확인 필요
 import Input from '../../../components/common/Input';   // 경로 확인 필요
+import LocalQuestLogo from '../../../components/common/LocalQuestLogo';
 import { userApi } from '../../../api/UserApi';
 import { setAuth } from '../../../store/authSlice';
 
@@ -56,7 +57,11 @@ function Login() {
 
     return (
         <div className="login-container">
-            <h2 className='login-title'>LocalQuest</h2>
+            <div className="login-title">
+                <Link to="/main" className="login-logo-link" aria-label="메인 페이지로 이동">
+                    <LocalQuestLogo />
+                </Link>
+            </div>
 
             <form className="login-form" onSubmit={handleLogin}>
                 {/* 공통 Input 컴포넌트 적용 */}
