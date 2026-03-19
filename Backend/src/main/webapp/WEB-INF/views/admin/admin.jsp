@@ -308,6 +308,13 @@
 
         function closeItemModal() {
             $('#itemModal').fadeOut(200);
+            // 애니메이션이 끝난 후 데이터를 깨끗하게 비워줍니다.
+            setTimeout(function() {
+                $('#itemForm')[0].reset();
+                $('#modalItemId').val("0");
+                $('#itemModalTitleText').html('<i class="fas fa-plus-circle"></i> 새 리워드 등록');
+                $('#itemSubmitBtn').text('등록하기');
+            }, 200);
         }
         
     </script>
