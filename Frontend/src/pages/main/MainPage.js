@@ -7,6 +7,14 @@ import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import './MainPage.css';
 
+
+  
+
+  const LOCATION_CONSENT_KEY = 'localquest_location_consent';
+  const CHEONAN_CENTER = {
+    lat: 36.81511,
+    lng: 127.11389
+  };
   function MainPage() {
     const mapRef = useRef(null);
     const consentRef = useRef(false);
@@ -47,13 +55,6 @@ import './MainPage.css';
     navigate('/login');
   };
 
-  
-
-  const LOCATION_CONSENT_KEY = 'localquest_location_consent';
-  const CHEONAN_CENTER = {
-    lat: 36.81511,
-    lng: 127.11389
-  };
 
     const [showConsentModal, setShowConsentModal] = useState(false);
     const [showMapDetailModal, setShowMapDetailModal] = useState(false);

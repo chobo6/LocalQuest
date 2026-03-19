@@ -5,12 +5,15 @@ import Login from './pages/auth/login/Login';
 import SignUp from './pages/auth/signup/SignUp';
 import Terms from './pages/auth/signup/Terms';
 import MainPage from './pages/main/MainPage';
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
     <Router>
+        <Header />
       <Routes>
         <Route
           path="/login"
@@ -27,6 +30,7 @@ function App() {
           element={<Navigate to={isAuthenticated ? "/main" : "/login"} replace />}
         />
       </Routes>
+      <Footer/>
     </Router>
   );
 }

@@ -1,10 +1,11 @@
 package com.app.service.user;
 
-import com.app.dto.user.LoginRequest;
-import com.app.dto.user.LoginResponse;
 import java.util.List;
 
+import com.app.dto.user.LoginRequest;
+import com.app.dto.user.LoginResponse;
 import com.app.dto.user.SignUpRequest;
+import com.app.dto.user.User;
 
 public interface UserService {
 	
