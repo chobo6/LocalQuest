@@ -30,64 +30,6 @@ const GRADE_ICON_MAP = {
   레전드: "👑",
 };
 
-// LQ_REWARD_ITEM 테이블 형태의 더미 데이터
-const LQ_REWARD_ITEM_MOCK = [
-  {
-    REWARD_ITEM_ID: 1,
-    NAME: "제휴 카페 아메리카노 교환권",
-    DESCRIPTION: "제휴 카페에서 즉시 사용할 수 있는 아메리카노 1잔 교환권",
-    PRICE_POINT: 1200,
-    STOCK: 95,
-    STATUS: "ON_SALE",
-    CREATED_AT: "2026-03-12",
-  },
-  {
-    REWARD_ITEM_ID: 2,
-    NAME: "편의점 모바일 금액권 1,000원",
-    DESCRIPTION: "전국 편의점에서 바로 사용하는 모바일 금액권",
-    PRICE_POINT: 900,
-    STOCK: 130,
-    STATUS: "ON_SALE",
-    CREATED_AT: "2026-03-14",
-  },
-  {
-    REWARD_ITEM_ID: 3,
-    NAME: "로컬 식당 사이드 메뉴 무료 쿠폰",
-    DESCRIPTION: "제휴 로컬 식당 방문 시 사이드 메뉴 1종 무료 제공",
-    PRICE_POINT: 1500,
-    STOCK: 35,
-    STATUS: "ON_SALE",
-    CREATED_AT: "2026-03-13",
-  },
-  {
-    REWARD_ITEM_ID: 4,
-    NAME: "지역 편집샵/독립서점 할인권",
-    DESCRIPTION: "천안 지역 편집샵 및 독립서점에서 사용 가능한 10% 할인권",
-    PRICE_POINT: 2000,
-    STOCK: 0,
-    STATUS: "SOLD_OUT",
-    CREATED_AT: "2026-03-10",
-  },
-  {
-    REWARD_ITEM_ID: 5,
-    NAME: "경험치 2배 부스터 (1시간)",
-    DESCRIPTION: "사용 후 1시간 동안 퀘스트 완료 XP 2배 적용",
-    PRICE_POINT: 1800,
-    STOCK: 60,
-    STATUS: "ON_SALE",
-    CREATED_AT: "2026-03-15",
-  },
-  {
-    REWARD_ITEM_ID: 6,
-    NAME: "한정판 프로필 뱃지",
-    DESCRIPTION: "시즌 한정 커스텀 프로필 뱃지 지급",
-    PRICE_POINT: 2500,
-    STOCK: 20,
-    STATUS: "ON_SALE",
-    CREATED_AT: "2026-03-11",
-  },
-];
-
 const STATUS_TABS = [
   { id: "ALL", label: "전체" },
   { id: "ON_SALE", label: "판매중" },
@@ -98,12 +40,12 @@ const RANKING_API_PATHS = [
   "/api/rankings"
 ].filter(Boolean);
 
-const WEEKLY_STATS = {
-  questDone: 5,
-  gainXp: 620,
-  usedCoupon: 3,
-  topPercent: 12,
-  weeklyProgress: 88,
+const DEFAULT_WEEKLY_STATS = {
+  questDone: 0,
+  gainXp: 0,
+  usedCoupon: 0,
+  topPercent: 100,
+  weeklyProgress: 0,
 };
 
 function resolveNicknameFromClient() {
@@ -130,6 +72,73 @@ function resolveNicknameFromClient() {
 function toSafeNumber(value, fallback = 0) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function formatDateLabel(dateValue) {
+  if (!dateValue) {
+    return "-";
+  }
+
+  if (typeof dateValue === "string") {
+    const normalized = dateValue.trim();
+    if (normalized.length >= 10 && /^\d{4}-\d{2}-\d{2}/.test(normalized)) {
+      return normalized.slice(0, 10);
+    }
+  }
+
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function normalizeRewardItems(items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items.map((item, index) => {
+    const rewardItemId = Math.max(
+      1,
+      toSafeNumber(item?.rewardItemId ?? item?.REWARD_ITEM_ID, index + 1),
+    );
+    const stock = Math.max(0, toSafeNumber(item?.stock ?? item?.STOCK, 0));
+    const rawStatus = String(item?.status ?? item?.STATUS ?? "")
+      .trim()
+      .toUpperCase();
+    const status = rawStatus || (stock > 0 ? "ON_SALE" : "SOLD_OUT");
+
+    return {
+      REWARD_ITEM_ID: rewardItemId,
+      NAME: item?.name ?? item?.NAME ?? "이름 없는 쿠폰",
+      DESCRIPTION: item?.description ?? item?.DESCRIPTION ?? "",
+      PRICE_POINT: Math.max(0, toSafeNumber(item?.pricePoint ?? item?.PRICE_POINT, 0)),
+      STOCK: stock,
+      STATUS: status,
+      CREATED_AT: formatDateLabel(item?.createdAt ?? item?.CREATED_AT),
+    };
+  });
+}
+
+function normalizeWeeklyStats(stats) {
+  return {
+    questDone: Math.max(0, toSafeNumber(stats?.questDone, DEFAULT_WEEKLY_STATS.questDone)),
+    gainXp: Math.max(0, toSafeNumber(stats?.gainXp, DEFAULT_WEEKLY_STATS.gainXp)),
+    usedCoupon: Math.max(0, toSafeNumber(stats?.usedCoupon, DEFAULT_WEEKLY_STATS.usedCoupon)),
+    topPercent: Math.min(
+      100,
+      Math.max(1, toSafeNumber(stats?.topPercent, DEFAULT_WEEKLY_STATS.topPercent)),
+    ),
+    weeklyProgress: Math.min(
+      100,
+      Math.max(0, toSafeNumber(stats?.weeklyProgress, DEFAULT_WEEKLY_STATS.weeklyProgress)),
+    ),
+  };
 }
 
 function normalizeRoadmapItems(roadmap) {
@@ -246,7 +255,9 @@ function RewardPage() {
   const [points, setPoints] = useState(0);
   const [wallet, setWallet] = useState([]);
   const [isWalletLoading, setIsWalletLoading] = useState(true);
-  const [rewardItems, setRewardItems] = useState(LQ_REWARD_ITEM_MOCK);
+  const [rewardItems, setRewardItems] = useState([]);
+  const [isRewardItemsLoading, setIsRewardItemsLoading] = useState(true);
+  const [weeklyStats, setWeeklyStats] = useState(DEFAULT_WEEKLY_STATS);
   const [rankingList, setRankingList] = useState([]);
   const [myRank, setMyRank] = useState(null);
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -412,6 +423,76 @@ function RewardPage() {
     };
 
     loadWallet();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRewardItems = async () => {
+      try {
+        if (isMounted) {
+          setIsRewardItemsLoading(true);
+        }
+
+        const response = await rewardApi.getRewardItems();
+        const data = response?.data;
+
+        if (!isMounted) {
+          return;
+        }
+
+        setRewardItems(normalizeRewardItems(data));
+      } catch (error) {
+        if (isMounted) {
+          console.error("쿠폰 상점 조회 실패:", error);
+          setRewardItems([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsRewardItemsLoading(false);
+        }
+      }
+    };
+
+    loadRewardItems();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadWeeklyStats = async () => {
+      try {
+        const nickname = resolveNicknameFromClient();
+        if (!nickname) {
+          if (isMounted) {
+            setWeeklyStats(DEFAULT_WEEKLY_STATS);
+          }
+          return;
+        }
+
+        const response = await rewardApi.getRewardWeeklyStats(nickname);
+        if (!isMounted) {
+          return;
+        }
+
+        setWeeklyStats(normalizeWeeklyStats(response?.data));
+      } catch (error) {
+        if (isMounted) {
+          console.error("이번 주 활동 조회 실패:", error);
+          setWeeklyStats(DEFAULT_WEEKLY_STATS);
+        }
+      }
+    };
+
+    loadWeeklyStats();
 
     return () => {
       isMounted = false;
@@ -747,30 +828,30 @@ function RewardPage() {
               <p className="reward-weekly-title">이번 주 활동</p>
               <div className="reward-weekly-grid">
                 <div>
-                  <strong>{WEEKLY_STATS.questDone}</strong>
+                  <strong>{weeklyStats.questDone}</strong>
                   <p>퀘스트 완료</p>
                 </div>
                 <div className="reward-is-center">
-                  <strong className="reward-is-primary">{WEEKLY_STATS.gainXp}</strong>
+                  <strong className="reward-is-primary">{weeklyStats.gainXp}</strong>
                   <p>획득 XP</p>
                 </div>
                 <div>
-                  <strong>{WEEKLY_STATS.usedCoupon}</strong>
+                  <strong>{weeklyStats.usedCoupon}</strong>
                   <p>사용 쿠폰</p>
                 </div>
               </div>
 
               <div>
                 <p className="reward-weekly-caption">
-                  상위 <span>{WEEKLY_STATS.topPercent}%</span> 탐험가입니다 🎉
+                  상위 <span>{weeklyStats.topPercent}%</span> 탐험가입니다 🎉
                 </p>
                 <div className="reward-xp-bar">
                   <div
                     className="reward-weekly-fill"
-                    style={{ width: weeklyAnimated ? `${WEEKLY_STATS.weeklyProgress}%` : "0%" }}
+                    style={{ width: weeklyAnimated ? `${weeklyStats.weeklyProgress}%` : "0%" }}
                   />
                 </div>
-                <p className="reward-weekly-foot">주간 목표 {WEEKLY_STATS.weeklyProgress}% 달성</p>
+                <p className="reward-weekly-foot">주간 목표 {weeklyStats.weeklyProgress}% 달성</p>
               </div>
             </article>
 
@@ -848,7 +929,12 @@ function RewardPage() {
             </div>
           </div>
 
-          {visibleItems.length > 0 ? (
+          {isRewardItemsLoading ? (
+            <div className="reward-empty-state">
+              <p>⏳</p>
+              <strong>쿠폰 상점 데이터를 불러오는 중입니다</strong>
+            </div>
+          ) : visibleItems.length > 0 ? (
             <div className="reward-shop-grid">
               {visibleItems.map((item) => {
                 const shortage = item.PRICE_POINT - points;

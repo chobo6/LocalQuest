@@ -8,11 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.app.dao.reward.RewardDAO;
 import com.app.dto.reward.RewardBoxSummary;
+import com.app.dto.reward.RewardShopItem;
+import com.app.dto.reward.RewardWeeklyStats;
 import com.app.dto.reward.RewardWalletCoupon;
 import com.app.service.reward.RewardService;
 
 @Service
 public class RewardServiceImpl implements RewardService {
+
+	private static final int WEEKLY_XP_GOAL = 700;
 
 	@Autowired
 	private RewardDAO rewardDAO;
@@ -61,6 +65,51 @@ public class RewardServiceImpl implements RewardService {
 	}
 
 	@Override
+	public List<RewardShopItem> getRewardShopItems() {
+		List<RewardShopItem> items = rewardDAO.findRewardShopItems();
+		if (items == null || items.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		for (RewardShopItem item : items) {
+			item.setPricePoint(Math.max(0, safeInt(item.getPricePoint(), 0)));
+			item.setStock(Math.max(0, safeInt(item.getStock(), 0)));
+
+			String status = item.getStatus();
+			if (status == null || status.trim().isEmpty()) {
+				item.setStatus(item.getStock() > 0 ? "ON_SALE" : "SOLD_OUT");
+			}
+		}
+
+		return items;
+	}
+
+	@Override
+	public RewardWeeklyStats getRewardWeeklyStats(String nickname) {
+		if (nickname == null || nickname.trim().isEmpty()) {
+			return createEmptyWeeklyStats();
+		}
+
+		RewardWeeklyStats stats = rewardDAO.findRewardWeeklyStats(nickname.trim());
+		if (stats == null) {
+			return createEmptyWeeklyStats();
+		}
+
+		int questDone = Math.max(0, safeInt(stats.getQuestDone(), 0));
+		int gainXp = Math.max(0, safeInt(stats.getGainXp(), 0));
+		int usedCoupon = Math.max(0, safeInt(stats.getUsedCoupon(), 0));
+		int topPercent = clamp(Math.max(1, safeInt(stats.getTopPercent(), 100)), 1, 100);
+		int weeklyProgress = clamp((int) Math.floor((gainXp * 100.0) / WEEKLY_XP_GOAL), 0, 100);
+
+		stats.setQuestDone(questDone);
+		stats.setGainXp(gainXp);
+		stats.setUsedCoupon(usedCoupon);
+		stats.setTopPercent(topPercent);
+		stats.setWeeklyProgress(weeklyProgress);
+		return stats;
+	}
+
+	@Override
 	public List<RewardWalletCoupon> getRewardWallet(String nickname) {
 		if (nickname == null || nickname.trim().isEmpty()) {
 			return Collections.emptyList();
@@ -88,6 +137,16 @@ public class RewardServiceImpl implements RewardService {
 		}
 
 		return coupons;
+	}
+
+	private RewardWeeklyStats createEmptyWeeklyStats() {
+		RewardWeeklyStats stats = new RewardWeeklyStats();
+		stats.setQuestDone(0);
+		stats.setGainXp(0);
+		stats.setUsedCoupon(0);
+		stats.setTopPercent(100);
+		stats.setWeeklyProgress(0);
+		return stats;
 	}
 
 	private int safeInt(Integer value, int fallback) {

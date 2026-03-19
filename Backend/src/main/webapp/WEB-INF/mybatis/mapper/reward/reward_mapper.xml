@@ -123,6 +123,90 @@
 		ORDER BY NVL(MIN_LEVEL, 1) ASC, NVL(MAX_LEVEL, 999999) ASC
 	</select>
 
+	<select id="findRewardShopItems" resultType="RewardShopItem">
+		SELECT
+			REWARD_ITEM_ID,
+			NAME,
+			DESCRIPTION,
+			PRICE_POINT,
+			STOCK,
+			STATUS,
+			CREATED_AT
+		FROM LQ_REWARD_ITEM
+		ORDER BY CREATED_AT DESC, REWARD_ITEM_ID DESC
+	</select>
+
+	<select id="findRewardWeeklyStats" parameterType="string" resultType="RewardWeeklyStats">
+		SELECT
+			NVL(
+				(
+					SELECT COUNT(*)
+					FROM LQ_USER_QUEST UQ
+					WHERE UQ.USER_ID = U.USER_ID
+					  AND UQ.STATUS = 'COMPLETED'
+					  AND UQ.COMPLETED_AT IS NOT NULL
+					  AND UQ.COMPLETED_AT &gt;= TRUNC(SYSDATE, 'IW')
+					  AND UQ.COMPLETED_AT &lt; TRUNC(SYSDATE, 'IW') + 7
+				),
+				0
+			) AS QUEST_DONE,
+			NVL(
+				(
+					SELECT SUM(NVL(Q.REWARD_EXP, 0))
+					FROM LQ_USER_QUEST UQ
+					INNER JOIN LQ_QUEST Q
+						ON Q.QUEST_ID = UQ.QUEST_ID
+					WHERE UQ.USER_ID = U.USER_ID
+					  AND UQ.STATUS = 'COMPLETED'
+					  AND UQ.COMPLETED_AT IS NOT NULL
+					  AND UQ.COMPLETED_AT &gt;= TRUNC(SYSDATE, 'IW')
+					  AND UQ.COMPLETED_AT &lt; TRUNC(SYSDATE, 'IW') + 7
+				),
+				0
+			) AS GAIN_XP,
+			NVL(
+				(
+					SELECT COUNT(*)
+					FROM LQ_REWARD_EXCHANGE RE
+					WHERE RE.USER_ID = U.USER_ID
+					  AND UPPER(NVL(RE.STATUS, '')) = 'USED'
+					  AND RE.USED_AT IS NOT NULL
+					  AND RE.USED_AT &gt;= TRUNC(SYSDATE, 'IW')
+					  AND RE.USED_AT &lt; TRUNC(SYSDATE, 'IW') + 7
+				),
+				0
+			) AS USED_COUPON,
+			NVL(
+				(
+					SELECT LEAST(
+						100,
+						GREATEST(
+							1,
+							ROUND((R.MY_RANK * 100.0) / NULLIF(R.TOTAL_COUNT, 0))
+						)
+					)
+					FROM (
+						SELECT
+							X.RN AS MY_RANK,
+							(SELECT COUNT(*) FROM LQ_USER_RANK) AS TOTAL_COUNT
+						FROM (
+							SELECT
+								UR.NICKNAME,
+								ROW_NUMBER() OVER (ORDER BY UR.TOTAL_EXP DESC, UR.RANK_ID ASC) AS RN
+							FROM LQ_USER_RANK UR
+						) X
+						WHERE X.NICKNAME = U.NICKNAME
+					) R
+				),
+				100
+			) AS TOP_PERCENT,
+			0 AS WEEKLY_PROGRESS
+		FROM LQ_USER U
+		WHERE U.STATUS = 'ACTIVE'
+		  AND U.NICKNAME = #{_parameter}
+		  AND ROWNUM = 1
+	</select>
+
 	<select id="findRewardWallet" parameterType="string" resultType="RewardWalletCoupon">
 		SELECT
 			RE.EXCHANGE_ID,

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.reward.RewardBoxSummary;
+import com.app.dto.reward.RewardShopItem;
+import com.app.dto.reward.RewardWeeklyStats;
 import com.app.dto.reward.RewardWalletCoupon;
 import com.app.service.reward.RewardService;
 
@@ -40,5 +42,18 @@ public class RewardItemAPIController {
 	) {
 		String normalizedNickname = nickname == null ? null : nickname.trim();
 		return ResponseEntity.ok(rewardService.getRewardWallet(normalizedNickname));
+	}
+
+	@GetMapping("/items")
+	public ResponseEntity<List<RewardShopItem>> getRewardShopItems() {
+		return ResponseEntity.ok(rewardService.getRewardShopItems());
+	}
+
+	@GetMapping("/weekly")
+	public ResponseEntity<RewardWeeklyStats> getRewardWeeklyStats(
+		@RequestParam(value = "nickname", required = false) String nickname
+	) {
+		String normalizedNickname = nickname == null ? null : nickname.trim();
+		return ResponseEntity.ok(rewardService.getRewardWeeklyStats(normalizedNickname));
 	}
 }
