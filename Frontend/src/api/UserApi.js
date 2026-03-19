@@ -15,4 +15,10 @@ export const userApi = {
     
     // 로그인
     login: (credentials) => api.post('/api/users/login', credentials),
+
+    // 아이디 찾기
+    findId: (payload) => api.post('/api/users/find-id', payload),
+
+    // 비밀번호 찾기
+    findPassword: (payload) => api.post('/api/users/find-password', payload),
 };

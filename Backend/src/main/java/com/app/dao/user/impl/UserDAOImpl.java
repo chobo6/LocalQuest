@@ -46,6 +46,27 @@ public class UserDAOImpl implements UserDAO {
 	public User findByUserLoginId(String userLoginId) {
 		return sqlSessionTemplate.selectOne("user_mapper.findByUserLoginId", userLoginId);
 	}
+
+	@Override
+	public User findByEmail(String email) {
+		return sqlSessionTemplate.selectOne("user_mapper.findByEmail", email);
+	}
+
+	@Override
+	public User findActiveUserByNameAndEmail(User user) {
+		return sqlSessionTemplate.selectOne("user_mapper.findActiveUserByNameAndEmail", user);
+	}
+
+	@Override
+	public User findActiveUserByUserLoginIdAndEmail(User user) {
+		return sqlSessionTemplate.selectOne("user_mapper.findActiveUserByUserLoginIdAndEmail", user);
+	}
+
+	@Override
+	public int updatePasswordByUserId(User user) {
+		return sqlSessionTemplate.update("user_mapper.updatePasswordByUserId", user);
+	}
+
     @Override
     public List<User> selectAllUsers() {
         return sqlSessionTemplate.selectList("user_mapper.selectAllUsers");

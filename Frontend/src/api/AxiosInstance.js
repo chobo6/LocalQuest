@@ -3,7 +3,7 @@ import { TOKEN_STORAGE_KEY, AUTH_STORAGE_KEY } from '../store/authSlice';
 
 const api = axios.create({
     baseURL: '', // package.json에 proxy를 설정했다면 비워두거나 '/' 사용
-    timeout: 5000, // 5초 이상 응답 없으면 에러 처리
+    timeout: 10000, // 10초 이상 응답 없으면 에러 처리
     headers: {
         'Content-Type': 'application/json',
     }

@@ -7,10 +7,12 @@ import './SignUp.css';
 
 function Signup() {
     const navigate = useNavigate();
-    const userIdRegex = /^[A-Za-z0-9_]{4,20}$/;
-    const nicknameRegex = /^[A-Za-z0-9가-힣_]{2,20}$/;
+    const userIdRegex = /^[A-Za-z0-9]{4,20}$/;
+    const nicknameRegex = /^[A-Za-z0-9\uAC00-\uD7A3_]{2,20}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d\s])(?=\S+$).{8,20}$/;
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    const nameRegex = /^[A-Za-z\uAC00-\uD7A3\s]{1,30}$/;
+    const nameJamoRegex = /[\u1100-\u11FF\u3130-\u318F]/;
 
     const [formData, setFormData] = useState({
         userId: '',
@@ -66,24 +68,35 @@ function Signup() {
     };
 
     const validateUserId = (value) => {
-        if (!value) return "아이디를 입력해주세요.";
+        if (!value) return '아이디를 입력해주세요.';
         if (!userIdRegex.test(value)) {
-            return "아이디는 4~20자 영문/숫자/언더바(_)만 사용할 수 있습니다.";
+            return '아이디는 4~20자 영문/숫자만 사용할 수 있습니다.';
+        }
+        return '';
+    };
+
+    const validateName = (value) => {
+        if (!value) return '이름을 입력해주세요.';
+        if (nameJamoRegex.test(value)) {
+            return '이름은 자음/모음만 입력할 수 없고, 완성형 한글 또는 영문만 가능합니다.';
+        }
+        if (!nameRegex.test(value)) {
+            return '이름은 한글(완성형)과 영문만 입력할 수 있습니다.';
         }
         return '';
     };
 
     const validateNickname = (value) => {
-        if (!value) return "닉네임을 입력해주세요.";
+        if (!value) return '닉네임을 입력해주세요.';
         if (!nicknameRegex.test(value)) {
-            return "닉네임은 2~20자 한글/영문/숫자/언더바(_)만 사용할 수 있습니다.";
+            return '닉네임은 2~20자 한글/영문/숫자/밑줄(_)만 사용할 수 있습니다.';
         }
         return '';
     };
 
     const validateEmail = (value) => {
-        if (!value) return "이메일을 입력해주세요.";
-        if (!emailRegex.test(value)) return "올바른 이메일 형식이 아닙니다.";
+        if (!value) return '이메일을 입력해주세요.';
+        if (!emailRegex.test(value)) return '올바른 이메일 형식이 아닙니다.';
         return '';
     };
 
@@ -108,6 +121,10 @@ function Signup() {
         if (name === 'email') {
             setErrors((prev) => ({ ...prev, email: '' }));
             updateFieldCheck('email', 'idle');
+        }
+
+        if (name === 'name') {
+            setErrors((prev) => ({ ...prev, name: '' }));
         }
 
         if (name === 'birthYear' || name === 'birthMonth' || name === 'birthDay') {
@@ -176,55 +193,61 @@ function Signup() {
         const trimmedUserId = formData.userId.trim();
         const trimmedNickname = formData.nickname.trim();
         const trimmedEmail = formData.email.trim();
+        const trimmedName = formData.name.trim();
         const nextErrors = {};
 
         const userIdError = validateUserId(trimmedUserId);
         if (userIdError) {
             nextErrors.userId = userIdError;
         } else if (fieldChecks.userId.status !== 'available') {
-            nextErrors.userId = "아이디 입력 후 포커스를 이동해 중복 확인을 완료해주세요.";
+            nextErrors.userId = '아이디 입력 후 포커스를 이동해 중복 확인을 완료해주세요.';
         }
 
         const nicknameError = validateNickname(trimmedNickname);
         if (nicknameError) {
             nextErrors.nickname = nicknameError;
         } else if (fieldChecks.nickname.status !== 'available') {
-            nextErrors.nickname = "닉네임 입력 후 포커스를 이동해 중복 확인을 완료해주세요.";
+            nextErrors.nickname = '닉네임 입력 후 포커스를 이동해 중복 확인을 완료해주세요.';
         }
 
         if (!formData.password) {
-            nextErrors.password = "비밀번호를 입력해주세요.";
+            nextErrors.password = '비밀번호를 입력해주세요.';
         } else if (!passwordRegex.test(formData.password)) {
-            nextErrors.password = "비밀번호는 8~20자, 영문/숫자/특수문자를 포함해야 합니다.";
+            nextErrors.password = '비밀번호는 8~20자 영문/숫자/특수문자를 포함해야 합니다.';
         }
 
         if (formData.password !== formData.confirmPassword) {
-            nextErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+            nextErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
         }
 
         const emailError = validateEmail(trimmedEmail);
         if (emailError) {
             nextErrors.email = emailError;
         } else if (fieldChecks.email.status !== 'available') {
-            nextErrors.email = "이메일 입력 후 포커스를 이동해 중복 확인을 완료해주세요.";
+            nextErrors.email = '이메일 입력 후 포커스를 이동해 중복 확인을 완료해주세요.';
+        }
+
+        const nameError = validateName(trimmedName);
+        if (nameError) {
+            nextErrors.name = nameError;
         }
 
         if (!formData.birthYear || !formData.birthMonth || !formData.birthDay) {
-            nextErrors.birthDate = "생년월일을 모두 선택해주세요.";
+            nextErrors.birthDate = '생년월일을 모두 선택해주세요.';
         } else {
             const birthDate = getBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
             if (!birthDate) {
-                nextErrors.birthDate = "올바른 생년월일이 아닙니다.";
+                nextErrors.birthDate = '올바른 생년월일이 아닙니다.';
             } else if (birthDate > today) {
-                nextErrors.birthDate = "생년월일은 오늘 이전이어야 합니다.";
+                nextErrors.birthDate = '생년월일은 오늘 이전이어야 합니다.';
             }
         }
 
         if (!['M', 'F'].includes(formData.gender)) {
-            nextErrors.gender = "성별을 선택해주세요.";
+            nextErrors.gender = '성별을 선택해주세요.';
         }
 
         if (Object.keys(nextErrors).length > 0) {
@@ -233,17 +256,17 @@ function Signup() {
         }
 
         try {
-            // 분리된 함수 호출
             await userApi.signUp({
                 ...formData,
                 userId: trimmedUserId,
                 nickname: trimmedNickname,
-                email: trimmedEmail
+                email: trimmedEmail,
+                name: trimmedName
             });
-            alert("성공!");
+            alert('성공!');
             navigate('/login');
         } catch (error) {
-            alert("실패: " + error.response?.data);
+            alert('실패: ' + error.response?.data);
         }
     };
 
@@ -252,8 +275,6 @@ function Signup() {
             <h2 className="signup-title">회원정보 입력</h2>
 
             <form className="signup-form" onSubmit={handleSignup}>
-
-                {/* 섹션 1: 계정 정보 (사이트 이용 정보) */}
                 <div className="form-section">
                     <h3 className="section-title">계정 정보</h3>
                     <div className="signup-field-group">
@@ -310,10 +331,16 @@ function Signup() {
 
                 <div className="section-divider"></div>
 
-                {/* 섹션 2: 개인 정보 */}
                 <div className="form-section">
                     <h3 className="section-title">개인 정보</h3>
-                    <Input label="이름" name="name" placeholder="이름 입력" value={formData.name} onChange={handleChange} />
+                    <Input
+                        label="이름"
+                        name="name"
+                        placeholder="이름 입력"
+                        value={formData.name}
+                        onChange={handleChange}
+                        error={errors.name}
+                    />
                     <div className="signup-field-group">
                         <Input
                             label="이메일"
@@ -342,7 +369,7 @@ function Signup() {
                                 className={`lq-select ${errors.birthDate ? 'is-error' : ''}`}
                             >
                                 <option value="">년</option>
-                                {years.map(y => <option key={y} value={y}>{y}</option>)}
+                                {years.map((y) => <option key={y} value={y}>{y}</option>)}
                             </select>
                             <select
                                 name="birthMonth"
@@ -351,7 +378,7 @@ function Signup() {
                                 className={`lq-select ${errors.birthDate ? 'is-error' : ''}`}
                             >
                                 <option value="">월</option>
-                                {months.map(m => <option key={m} value={m}>{m}</option>)}
+                                {months.map((m) => <option key={m} value={m}>{m}</option>)}
                             </select>
                             <select
                                 name="birthDay"
@@ -360,7 +387,7 @@ function Signup() {
                                 className={`lq-select ${errors.birthDate ? 'is-error' : ''}`}
                             >
                                 <option value="">일</option>
-                                {days.map(d => <option key={d} value={d}>{d}</option>)}
+                                {days.map((d) => <option key={d} value={d}>{d}</option>)}
                             </select>
                         </div>
                         {errors.birthDate && <span className="lq-error-msg">{errors.birthDate}</span>}
@@ -373,12 +400,16 @@ function Signup() {
                                 type="button"
                                 className={`gender-box ${formData.gender === 'M' ? 'active' : ''} ${errors.gender ? 'is-error' : ''}`}
                                 onClick={() => handleGenderSelect('M')}
-                            >남성</button>
+                            >
+                                남성
+                            </button>
                             <button
                                 type="button"
                                 className={`gender-box ${formData.gender === 'F' ? 'active' : ''} ${errors.gender ? 'is-error' : ''}`}
                                 onClick={() => handleGenderSelect('F')}
-                            >여성</button>
+                            >
+                                여성
+                            </button>
                         </div>
                         {errors.gender && <span className="lq-error-msg">{errors.gender}</span>}
                     </div>
