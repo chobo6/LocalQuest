@@ -13,6 +13,7 @@
 	<typeAliases>
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
 		<typeAlias type="com.app.dto.quest.QuestDTO" alias="Quest"/>
+		<typeAlias type="com.app.dto.reward.RewardItemDTO" alias="RewardItem"/>
 	</typeAliases>
 	
 </configuration>

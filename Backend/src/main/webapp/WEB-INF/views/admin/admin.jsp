@@ -246,6 +246,70 @@
             loadAdminContent(url);
         }
         
+        /* --- Reward Item 관련 JS --- */
+
+        function searchItem() {
+            const status = $('#filterItemStatus').val();
+            const keyword = $('#searchItemName').val();
+            loadAdminContent(ctx + "/admin/shop?status=" + status + "&keyword=" + encodeURIComponent(keyword));
+        }
+
+        function openItemModal() {
+            $('#modalItemId').val("0");
+            $('#itemForm')[0].reset();
+            $('#itemModalTitleText').html('<i class="fas fa-plus-circle"></i> 새 리워드 등록');
+            $('#itemSubmitBtn').text('등록하기');
+            $('#itemModal').fadeIn(200);
+        }
+
+        function editItemModal(data) {
+            $('#itemModalTitleText').html('<i class="fas fa-edit"></i> 아이템 정보 수정');
+            $('#itemSubmitBtn').text('수정하기');
+            
+            $('#modalItemId').val(data.id);
+            $('#i_name').val(data.name);
+            $('#i_price').val(data.price);
+            $('#i_stock').val(data.stock);
+            $('#i_status').val(data.status);
+            $('#i_desc').val(data.desc);
+            
+            $('#itemModal').fadeIn(200);
+        }
+
+        function submitItem() {
+            const formData = $('#itemForm').serialize();
+            $.ajax({
+                url: ctx + "/admin/shop/save",
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.trim() === "success") {
+                        alert("저장되었습니다.");
+                        closeItemModal();
+                        loadAdminContent(ctx + "/admin/shop");
+                    } else { alert("실패했습니다."); }
+                }
+            });
+        }
+
+        function updateItemStatus(itemId, status) {
+            if(!confirm("아이템 상태를 변경하시겠습니까?")) return;
+            $.ajax({
+                url: ctx + "/admin/shop/updateStatus",
+                type: "POST",
+                data: { itemId: itemId, status: status },
+                success: function(res) {
+                    if(res.trim() === "success") {
+                        loadAdminContent(ctx + "/admin/shop");
+                    }
+                }
+            });
+        }
+
+        function closeItemModal() {
+            $('#itemModal').fadeOut(200);
+        }
+        
     </script>
 </head>
 <body>

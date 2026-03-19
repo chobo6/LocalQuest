@@ -289,3 +289,17 @@
 .adm-q-search-box button:hover {
     color: #ffffff;
 }
+
+/* 상점 전용 아이콘 색상 */
+.point-icon { color: #ffca28; margin-right: 5px; }
+.stock-icon { color: #42a5f5; margin-right: 5px; }
+
+/* 품절(SOLD_OUT) 카드의 시각적 효과 */
+.adm-q-card.SOLD_OUT {
+    opacity: 0.6;
+    border-left: 4px solid #ef5350;
+}
+
+.adm-q-card.SOLD_OUT .adm-q-status-badge {
+    background: #ef5350;
+}

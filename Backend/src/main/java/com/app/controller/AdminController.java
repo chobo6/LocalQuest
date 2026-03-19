@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.reward.RewardItemDTO;
 import com.app.dto.user.User;
 import com.app.service.quest.QuestService;
+import com.app.service.reward.RewardItemService;
 import com.app.service.user.UserService;
 
 @Controller
@@ -27,6 +29,9 @@ public class AdminController {
 	
 	@Autowired
     private QuestService questService;
+	
+	@Autowired
+    private RewardItemService rewardItemService;
 
 	// 관리자 메인 페이지
 	@GetMapping("")
@@ -198,6 +203,72 @@ public class AdminController {
         } catch (Exception e) {
             // 에러 발생 시 콘솔에 출력하고 error 반환
             System.err.println("!!! 퀘스트 수정 중 서버 에러 발생 !!!");
+            e.printStackTrace();
+            return "error";
+        }
+    }
+    
+    // ================ Reward_Item ================
+    
+    /**
+     * 1. 리워드 아이템 목록 조회 (검색 및 필터 통합)
+     * URL: /admin/shop
+     */
+    @GetMapping("/shop")
+    public String itemList(
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            Model model) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", (status != null && !status.isEmpty()) ? status : null);
+        params.put("keyword", (keyword != null && !keyword.isEmpty()) ? keyword : null);
+
+        // 서비스 호출
+        List<RewardItemDTO> itemList = rewardItemService.getSearchItems(params);
+        model.addAttribute("itemList", itemList);
+        
+        // 필터 상태 유지용
+        model.addAttribute("currentStatus", status);
+        model.addAttribute("currentKeyword", keyword);
+
+        return "admin/admin-reward-item"; // admin-shop.jsp 로 이동
+    }
+
+    /**
+     * 2. 아이템 등록 및 수정 처리 (Ajax)
+     * URL: /admin/shop/save
+     */
+    @PostMapping("/shop/save")
+    @ResponseBody
+    public String saveItem(RewardItemDTO item) {
+        try {
+            boolean result;
+            // PK인 rewardItemId가 0이면 등록, 아니면 수정
+            if (item.getRewardItemId() == 0) {
+                result = rewardItemService.registerItem(item);
+            } else {
+                result = rewardItemService.modifyItem(item);
+            }
+            return result ? "success" : "fail";
+        } catch (Exception e) {
+            System.err.println("!!! 상점 아이템 저장 중 에러 발생 !!!");
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    /**
+     * 3. 아이템 상태 변경 (판매중, 품절, 숨김, 삭제 등 Ajax)
+     * URL: /admin/shop/updateStatus
+     */
+    @PostMapping("/shop/updateStatus")
+    @ResponseBody
+    public String updateItemStatus(@RequestParam int itemId, @RequestParam String status) {
+        try {
+            boolean isUpdated = rewardItemService.changeItemStatus(itemId, status);
+            return isUpdated ? "success" : "fail";
+        } catch (Exception e) {
             e.printStackTrace();
             return "error";
         }
