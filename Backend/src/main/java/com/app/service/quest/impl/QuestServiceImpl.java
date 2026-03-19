@@ -34,11 +34,6 @@ public class QuestServiceImpl implements QuestService{
     }
 
     @Override
-    public boolean modifyQuest(QuestDTO quest) {
-        return questDAO.updateQuest(quest) == 1;
-    }
-
-    @Override
     public boolean changeQuestStatus(int questId, String status) {
         // DAO에 넘길 파라미터 조립 (Map 활용)
         Map<String, Object> params = new HashMap<>();
@@ -46,5 +41,10 @@ public class QuestServiceImpl implements QuestService{
         params.put("status", status); // 'ACTIVE', 'INACTIVE', 'DELETED'
         
         return questDAO.updateQuestStatus(params) == 1;
+    }
+    
+    @Override
+    public boolean updateQuest(QuestDTO quest) {
+        return questDAO.updateQuest(quest) > 0;
     }
 }

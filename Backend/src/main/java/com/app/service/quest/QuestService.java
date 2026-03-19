@@ -15,8 +15,8 @@ public interface QuestService {
     // 새로운 퀘스트 등록하기
     boolean registerQuest(QuestDTO quest);
     
-    // 퀘스트 정보 수정하기
-    boolean modifyQuest(QuestDTO quest);
+    // 퀘스트 수정하기
+    public boolean updateQuest(QuestDTO quest);
     
     // 퀘스트 상태 변경하기 (활성화/비활성화/삭제)
     boolean changeQuestStatus(int questId, String status);

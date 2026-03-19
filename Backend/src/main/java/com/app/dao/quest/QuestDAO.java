@@ -21,4 +21,5 @@ public interface QuestDAO {
     
     // 퀘스트 상태 변경 (ACTIVE, INACTIVE, DELETED)
     int updateQuestStatus(Map<String, Object> params);
+    
 }

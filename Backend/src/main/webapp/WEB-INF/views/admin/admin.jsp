@@ -156,53 +156,82 @@
             });
         }
         
-     // 모달 열기
-        function openQuestModal() {
-            $('#questModal').fadeIn(200);
-        }
 
-        // 모달 닫기
-        function closeQuestModal() {
-            $('#questModal').fadeOut(200);
-            $('#questForm')[0].reset(); // 입력값 초기화
-        }
-		
         /**
-         * 퀘스트 등록 실행 함수
+         * [기존 함수 보완] 등록/수정 통합 제출
          */
         function submitQuest() {
-            // 폼 객체 가져오기 (이름으로 직접 접근하거나 ID 활용)
             const form = $('#questForm')[0];
+            const questId = $('#modalQuestId').val();
             
-            // 유효성 검사 예시
-            if (!form.title.value.trim()) {
-                alert("퀘스트 제목을 입력해주세요.");
-                form.title.focus();
-                return;
-            }
-
-            const formData = $(form).serialize(); 
+            // 수정인지 등록인지에 따라 URL 분기 (또는 하나의 URL에서 처리 가능)
+            const url = (questId === "0") ? ctx + "/admin/quests/register" : ctx + "/admin/quests/update";
+            
+            const formData = $(form).serialize();
 
             $.ajax({
-                url: ctx + "/admin/quests/register",
+                url: url,
                 type: "POST",
                 data: formData,
                 success: function(res) {
                     if (res.trim() === "success") {
-                        alert("새로운 퀘스트가 등록되었습니다.");
-                        closeQuestModal(); // 모달 닫기
-                        
-                        // 현재 탭(퀘스트 관리) 유지하며 리로드
+                        alert(questId === "0" ? "등록되었습니다." : "수정되었습니다.");
+                        closeQuestModal();
                         loadAdminContent(ctx + "/admin/quests");
                     } else {
-                        alert("등록에 실패했습니다.");
+                        alert("처리에 실패했습니다.");
                     }
-                },
-                error: function() {
-                    alert("서버 통신 오류가 발생했습니다.");
                 }
             });
         }
+
+        /* --- admin.jsp 스크립트 영역 수정 --- */
+
+        /**
+         * [추가/수정] 새 퀘스트 모달 열기
+         * (수정 모드였다가 다시 '새 등록'을 누를 때를 대비해 초기화 로직 추가)
+         */
+        function openQuestModal() {
+            $('#modalQuestId').val("0"); // PK 초기화
+            $('#questForm')[0].reset();  // 폼 초기화
+            $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-plus-circle"></i> 새 퀘스트 등록');
+            $('#modalSubmitBtn').text('등록하기');
+            $('#questModal').fadeIn(200);
+        }
+
+        /**
+         * 수정 모달 열기 (기존 값 채우기)
+         */
+        function editQuestModal(data) {
+            // 1. 모달 텍스트 및 버튼 변경
+            $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-edit"></i> 퀘스트 수정');
+            $('#modalSubmitBtn').text('수정하기');
+            
+            // 2. 데이터 채우기 (admin-quest.jsp에 설정한 m_ ID들과 맞춤)
+            $('#modalQuestId').val(data.id); 
+            $('#m_title').val(data.title);
+            $('#m_category').val(data.category);
+            $('#m_exp').val(data.exp);
+            $('#m_point').val(data.point);
+            $('#m_desc').val(data.desc);
+            
+            // 3. 모달 열기
+            $('#questModal').fadeIn(200);
+        }
+
+        /**
+         * 모달 닫을 때 초기화 (이미 작성하신 코드 유지하되, 리셋 확인)
+         */
+        function closeQuestModal() {
+            $('#questModal').fadeOut(200);
+            setTimeout(function() { // 애니메이션 끝난 후 리셋 (시각적 깔끔함)
+                $('#questForm')[0].reset();
+                $('#modalQuestId').val("0");
+                $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-plus-circle"></i> 새 퀘스트 등록');
+                $('#modalSubmitBtn').text('등록하기');
+            }, 200);
+        }
+        
     </script>
 </head>
 <body>

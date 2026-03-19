@@ -22,7 +22,16 @@
                     <span class="adm-q-status-badge">${quest.status}</span>
                 </div>
                 
-                <div class="adm-q-card-body">
+                <div class="adm-q-card-body" 
+                     onclick="editQuestModal({
+                        id: '${quest.questId}',
+                        title: '${quest.title}',
+                        category: '${quest.category}',
+                        exp: '${quest.rewardExp}',
+                        point: '${quest.rewardPoint}',
+                        desc: '${quest.description.replace("'", "\\'")}'
+                     })" 
+                     style="cursor:pointer;" title="클릭하여 수정">
                     <h3 class="adm-q-card-title">${quest.title}</h3>
                     <p class="adm-q-card-desc">${quest.description}</p>
                 </div>
@@ -55,18 +64,21 @@
 <div id="questModal" class="adm-q-modal">
     <div class="adm-q-modal-content">
         <div class="adm-q-modal-header">
-            <h3><i class="fas fa-plus-circle"></i> 새 퀘스트 등록</h3>
+            <h3 id="modalTitleText"><i class="fas fa-plus-circle"></i> 새 퀘스트 등록</h3>
             <span class="close-modal" onclick="closeQuestModal()">&times;</span>
         </div>
+        
         <form id="questForm">
+            <input type="hidden" name="questId" id="modalQuestId" value="0"> 
+            
             <div class="modal-body">
                 <div class="input-group">
                     <label>퀘스트 제목</label>
-                    <input type="text" name="title" placeholder="퀘스트 제목을 입력하세요" required>
+                    <input type="text" id="m_title" name="title" placeholder="퀘스트 제목을 입력하세요" required>
                 </div>
                 <div class="input-group">
                     <label>카테고리</label>
-                    <select name="category">
+                    <select id="m_category" name="category">
                         <option value="DAILY">DAILY</option>
                         <option value="MAIN">MAIN</option>
                         <option value="SUB">SUB</option>
@@ -75,20 +87,20 @@
                 </div>
                 <div class="input-group">
                     <label>보상 경험치(EXP)</label>
-                    <input type="number" name="rewardExp" value="0" min="0">
+                    <input type="number" id="m_exp" name="rewardExp" value="0" min="0">
                 </div>
                 <div class="input-group">
                     <label>보상 포인트(PT)</label>
-                    <input type="number" name="rewardPoint" value="0" min="0">
+                    <input type="number" id="m_point" name="rewardPoint" value="0" min="0">
                 </div>
                 <div class="input-group">
                     <label>설명</label>
-                    <textarea name="description" rows="4" placeholder="퀘스트 상세 내용을 입력하세요" required></textarea>
+                    <textarea id="m_desc" name="description" rows="4" placeholder="퀘스트 상세 내용을 입력하세요" required></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeQuestModal()">취소</button>
-                <button type="button" class="btn-submit" onclick="submitQuest()">등록하기</button>
+                <button type="button" class="btn-submit" id="modalSubmitBtn" onclick="submitQuest()">등록하기</button>
             </div>
         </form>
     </div>

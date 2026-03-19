@@ -163,4 +163,27 @@ public class AdminController {
         }
     }
     
+    /**
+     * 퀘스트 정보 수정 처리 (Ajax)
+     */
+    @PostMapping("/quests/update")
+    @ResponseBody // Ajax 요청에 대해 문자열 데이터를 직접 반환하기 위해 필수!
+    public String updateQuest(QuestDTO quest) {
+        try {
+            // 1. 넘어온 데이터 로그 확인 (디버깅용)
+            System.out.println(">>> 퀘스트 수정 요청 데이터: " + quest);
+
+            // 2. 서비스 호출 (성공 시 true 반환)
+            boolean isUpdated = questService.updateQuest(quest);
+
+            // 3. 결과 반환 (JS의 res.trim() === "success"와 매칭)
+            return isUpdated ? "success" : "fail";
+
+        } catch (Exception e) {
+            // 에러 발생 시 콘솔에 출력하고 error 반환
+            System.err.println("!!! 퀘스트 수정 중 서버 에러 발생 !!!");
+            e.printStackTrace();
+            return "error";
+        }
+    }
 }
