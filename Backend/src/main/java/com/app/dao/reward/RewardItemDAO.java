@@ -8,6 +8,8 @@ import com.app.dto.reward.RewardItemDTO;
 public interface RewardItemDAO {
 	
 	List<RewardItemDTO> selectSearchItems(Map<String, Object> params);
+
+	int saveRewardItem(RewardItemDTO rewardItem);
 	
     int insertItem(RewardItemDTO item);
     

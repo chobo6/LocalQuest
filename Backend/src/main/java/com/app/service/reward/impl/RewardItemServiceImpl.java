@@ -28,6 +28,11 @@ public class RewardItemServiceImpl implements RewardItemService{
     }
 
     @Override
+    public int saveRewardItem(RewardItemDTO rewardItem) {
+    	return rewardItemDAO.saveRewardItem(rewardItem);
+    }
+
+    @Override
     public boolean modifyItem(RewardItemDTO item) {
         // update 결과가 1이면 true 반환
         return rewardItemDAO.updateItem(item) > 0;

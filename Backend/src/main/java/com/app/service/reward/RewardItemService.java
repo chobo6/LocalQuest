@@ -18,6 +18,8 @@ public interface RewardItemService {
      * @return 성공 여부 (true: 성공)
      */
     boolean registerItem(RewardItemDTO item);
+
+    int saveRewardItem(RewardItemDTO rewardItem);
     
     /**
      * 리워드 아이템 정보 수정 (이름, 설명, 가격, 재고 등)

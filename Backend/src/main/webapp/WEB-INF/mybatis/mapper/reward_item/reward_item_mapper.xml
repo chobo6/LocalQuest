@@ -34,6 +34,26 @@
 		)
 	</insert>
 
+	<insert id="saveRewardItem" parameterType="RewardItem">
+		INSERT INTO LQ_REWARD_ITEM (
+		REWARD_ITEM_ID,
+		NAME,
+		DESCRIPTION,
+		PRICE_POINT,
+		STOCK,
+		STATUS,
+		CREATED_AT
+		) VALUES (
+		SEQ_LQ_REWARD_ITEM_PK.NEXTVAL,
+		#{name},
+		#{description},
+		#{pricePoint},
+		#{stock},
+		#{status},
+		SYSDATE
+		)
+	</insert>
+
 	<update id="updateItem" parameterType="RewardItem">
 		UPDATE LQ_REWARD_ITEM
 		SET

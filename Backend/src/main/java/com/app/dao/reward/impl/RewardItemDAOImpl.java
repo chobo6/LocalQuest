@@ -23,6 +23,12 @@ public class RewardItemDAOImpl implements RewardItemDAO{
     public List<RewardItemDTO> selectSearchItems(Map<String, Object> params) {
     	return sqlSessionTemplate.selectList(NAMESPACE + ".selectSearchItems", params);
     }
+
+    @Override
+    public int saveRewardItem(RewardItemDTO rewardItem) {
+    	return sqlSessionTemplate.insert(NAMESPACE + ".saveRewardItem", rewardItem);
+    }
+
     @Override
     public int insertItem(RewardItemDTO item) {
         return sqlSessionTemplate.insert(NAMESPACE + ".insertItem", item);
