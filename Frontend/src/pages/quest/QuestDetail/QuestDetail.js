@@ -11,6 +11,8 @@ const getDifficultyText = (rewardExp) => {
   return '쉬움';
 };
 
+const formatDuration = (timeLimit) => (timeLimit ? `${timeLimit}분` : '제한 없음');
+
 const toQuestDetailModel = (quest) => {
   const locations = Array.isArray(quest.locations)
     ? [...quest.locations].sort((a, b) => (a.visitOrder || 0) - (b.visitOrder || 0))
@@ -24,7 +26,7 @@ const toQuestDetailModel = (quest) => {
       locations.length > 0
         ? locations.map((location) => location.name).join(', ')
         : '지정된 장소 정보가 없습니다.',
-    duration: `${Math.max(30, Math.round((quest.rewardExp || 0) / 2))}분`,
+    duration: formatDuration(quest.timeLimit),
     reward: `${quest.rewardPoint}P`,
     description: quest.description,
     locations,
@@ -91,7 +93,7 @@ function QuestDetail() {
                 <strong>{quest.locationSummary}</strong>
               </article>
               <article>
-                <span>예상 시간</span>
+                <span>제한 시간</span>
                 <strong>{quest.duration}</strong>
               </article>
             </div>

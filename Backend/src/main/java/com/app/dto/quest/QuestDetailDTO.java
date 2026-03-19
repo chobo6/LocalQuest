@@ -13,6 +13,7 @@ public class QuestDetailDTO {
     private String category;
     private int rewardExp;
     private int rewardPoint;
+    private Integer timeLimit;
     private String status;
     private Date createdAt;
     private List<QuestLocationInfoDTO> locations;

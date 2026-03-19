@@ -13,6 +13,7 @@
             CATEGORY,
             REWARD_EXP as rewardExp,
             REWARD_POINT as rewardPoint,
+            TIME_LIMIT as timeLimit,
             STATUS,
             CREATED_AT as createdAt
         FROM LQ_QUEST
@@ -28,6 +29,7 @@
             CATEGORY,
             REWARD_EXP as rewardExp,
             REWARD_POINT as rewardPoint,
+            TIME_LIMIT as timeLimit,
             STATUS,
             CREATED_AT as createdAt
         FROM LQ_QUEST
@@ -56,9 +58,9 @@
 
     <insert id="insertQuest" parameterType="Quest">
         INSERT INTO LQ_QUEST (
-            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT, STATUS, CREATED_AT
+            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT, TIME_LIMIT, STATUS, CREATED_AT
         ) VALUES (
-            SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}, #{status}, SYSDATE
+            SEQ_LQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}, #{timeLimit}, #{status}, SYSDATE
         )
     </insert>
 
@@ -69,6 +71,7 @@
             CATEGORY = #{category},
             REWARD_EXP = #{rewardExp},
             REWARD_POINT = #{rewardPoint},
+            TIME_LIMIT = #{timeLimit},
             STATUS = #{status}
         WHERE QUEST_ID = #{questId}
     </update>
