@@ -7,6 +7,7 @@ const Header = () => {
   const [userRole, setUserRole] = useState('GUEST'); 
 
   return (
+    <div>
     <header className="header-main-container">
       {/* 상단 섹션: 로고 & 유틸 버튼 */}
       <div className="header-top-section">
@@ -69,6 +70,10 @@ const Header = () => {
         </div>
       </nav>
     </header>
+            <div className="header-relative-space">
+              
+            </div>
+       </div>     
   );
 };
 
