@@ -33,6 +33,12 @@
         <typeAlias type="com.app.dto.userquestprogress.UserQuestProgressDTO" alias="UserQuestProgressDTO"/>
         <typeAlias type="com.app.dto.userrank.UserRankDTO" alias="UserRankDTO"/>
         <typeAlias type="com.app.dto.quest.QuestDTO" alias="Quest"/>
+        <typeAlias type="com.app.dto.rank.Rank" alias="Rank" />
+		<typeAlias type="com.app.dto.reward.RewardBoxSummary" alias="RewardBoxSummary"/>
+		<typeAlias type="com.app.dto.reward.RewardRoadmapItem" alias="RewardRoadmapItem"/>
+		<typeAlias type="com.app.dto.reward.RewardShopItem" alias="RewardShopItem"/>
+		<typeAlias type="com.app.dto.reward.RewardWeeklyStats" alias="RewardWeeklyStats"/>
+		<typeAlias type="com.app.dto.reward.RewardWalletCoupon" alias="RewardWalletCoupon"/>
     </typeAliases>
 
 </configuration>
