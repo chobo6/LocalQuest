@@ -1,5 +1,8 @@
 package com.app.dao.user.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +15,8 @@ public class UserDAOImpl implements UserDAO {
 
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
+	
+//    private static final String NAMESPACE = "com.app.dao.user.UserDAO";
 
 	@Override
 	public int saveUser(User user) {
@@ -41,5 +46,26 @@ public class UserDAOImpl implements UserDAO {
 	public User findByUserLoginId(String userLoginId) {
 		return sqlSessionTemplate.selectOne("user_mapper.findByUserLoginId", userLoginId);
 	}
+    @Override
+    public List<User> selectAllUsers() {
+        return sqlSessionTemplate.selectList("user_mapper.selectAllUsers");
+    }
+    
+
+    
+    @Override
+    public int updateUserRole(Map<String, Object> roleMap) {
+        return sqlSessionTemplate.update("user_mapper.updateUserRole", roleMap);
+    }
+
+    @Override
+    public int updateUserStatus(Map<String, Object> statusMap) {
+        return sqlSessionTemplate.update("user_mapper.updateUserStatus", statusMap);
+    }
+
+	
+    public List<User> searchUsers(Map<String, Object> searchParams) {
+        return sqlSessionTemplate.selectList("user_mapper.searchUser", searchParams);
+    }
 
 }

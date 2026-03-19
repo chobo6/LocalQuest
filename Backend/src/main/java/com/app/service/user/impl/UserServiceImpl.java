@@ -2,6 +2,9 @@ package com.app.service.user.impl;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -213,5 +216,36 @@ public class UserServiceImpl implements UserService{
 	private String trimToEmpty(String value) {
 		return value == null ? "" : value.trim();
 	}
+    public List<User> getAllUsers() {
+        return userDAO.selectAllUsers();
+    }
 
+	@Override
+	public List<User> searchUsers(String type, String keyword, String sort) {
+	    Map<String, Object> searchParams = new HashMap<>();
+	    searchParams.put("type", type);
+	    searchParams.put("keyword", keyword);
+	    searchParams.put("sort", sort); // 'ASC' 또는 'DESC'
+	    
+	    return userDAO.searchUsers(searchParams);
+	}
+
+    @Override
+    public boolean changeUserRole(int userId, String newRole) {
+        Map<String, Object> roleMap = new HashMap<>();
+        roleMap.put("userId", userId);
+        roleMap.put("newRole", newRole);
+        
+        // 업데이트된 행의 수가 1이면 성공(true) 반환
+        return userDAO.updateUserRole(roleMap) == 1;
+    }
+
+    @Override
+    public boolean changeUserStatus(int userId, String newStatus) {
+        Map<String, Object> statusMap = new HashMap<>();
+        statusMap.put("userId", userId);
+        statusMap.put("newStatus", newStatus);
+        
+        return userDAO.updateUserStatus(statusMap) == 1;
+    }
 }
