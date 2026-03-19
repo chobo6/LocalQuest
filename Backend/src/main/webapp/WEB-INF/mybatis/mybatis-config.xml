@@ -27,10 +27,7 @@
 		<typeAlias type="com.app.dto.rewardexchange.RewardExchangeDTO" alias="RewardExchangeDTO"/>
 		<typeAlias type="com.app.dto.rewarditem.RewardItemDTO" alias="RewardItemDTO"/>
 		<typeAlias type="com.app.dto.user.User" alias="User"/>
-		<typeAlias type="com.app.dto.userbadge.UserBadgeDTO" alias="UserBadgeDTO"/>
-		<typeAlias type="com.app.dto.userquest.UserQuestDTO" alias="UserQuestDTO"/>
-		<typeAlias type="com.app.dto.userquestprogress.UserQuestProgressDTO" alias="UserQuestProgressDTO"/>
-		<typeAlias type="com.app.dto.userrank.UserRankDTO" alias="UserRankDTO"/>
+		<typeAlias type="com.app.dto.quest.QuestDTO" alias="Quest"/>
 	</typeAliases>
 	
 </configuration>

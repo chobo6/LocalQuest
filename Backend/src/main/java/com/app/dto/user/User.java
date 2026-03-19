@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class User {
+	
 	int userId;
 	String userLoginId;
 	String name;
@@ -18,5 +19,6 @@ public class User {
 	int exp;
 	int point;
 	String status;
-	LocalDateTime createAt;
+	LocalDateTime createdAt;
+	
 }

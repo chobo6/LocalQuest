@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 .header-main-container {
   width: 100%;
   display: flex;
@@ -85,107 +87,12 @@
   font-weight: 700;
   color: #333;
   transition: color 0.2s;
-  word-break: keep-all;
-  white-space: nowrap;
 }
 
 .header-nav-link:hover { color: #D93D5E; }
 
-@media (max-width: 1024px) {
-  .header-inner {
-    padding: 0 32px;
-  }
 
-  .header-nav-list {
-    gap: 28px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-top-section {
-    padding: 14px 0;
-  }
-
-  .header-inner {
-    padding: 0 20px;
-  }
-
-  .header-logo-wrapper {
-    gap: 8px;
-  }
-
-  .header-logo-text {
-    font-size: 20px;
-  }
-
-  .header-utility-btns {
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .header-auth-btn,
-  .header-user-info {
-    font-size: 13px;
-  }
-
-  .header-signup-btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
-
-  .header-nav-bar {
-    height: auto;
-  }
-
-  .header-nav-bar .header-inner {
-    padding: 0 20px;
-  }
-
-  .header-nav-list {
-    width: 100%;
-    gap: 0;
-    justify-content: space-between;
-    padding: 16px 0 14px;
-  }
-
-  .header-nav-link {
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-inner {
-    padding: 0 14px;
-  }
-
-  .header-logo-text {
-    font-size: 16px;
-    line-height: 1.1;
-  }
-
-  .header-utility-btns {
-    gap: 8px;
-  }
-
-  .header-auth-btn,
-  .header-signup-btn {
-    min-height: 36px;
-  }
-
-  .header-signup-btn {
-    padding: 8px 14px;
-    border-radius: 999px;
-  }
-
-  .header-nav-bar .header-inner {
-    padding: 0 14px;
-  }
-
-  .header-nav-list {
-    padding: 14px 0 12px;
-  }
-
-  .header-nav-link {
-    font-size: 13px;
-  }
+.header-relative-space {
+	position: relative;
+	height: 125px;
 }

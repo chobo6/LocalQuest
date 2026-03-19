@@ -82,6 +82,7 @@
   transition: all 0.2s ease-in-out;
   display: inline-block;
   cursor: pointer;
+  word-break: keep-all;
 }
 
 .footer-link:hover {
@@ -192,4 +193,147 @@
 .modal-fixed-content::-webkit-scrollbar-thumb {
   background-color: #ddd;
   border-radius: 10px;
+}
+
+@media (max-width: 1024px) {
+  .footer-inner-content {
+    padding: 0 28px;
+    gap: 40px;
+  }
+
+  .footer-brand-section {
+    width: 280px;
+  }
+
+  .footer-menu-wrapper {
+    gap: 56px;
+    flex-wrap: wrap;
+  }
+
+  .footer-bottom-bar {
+    padding: 24px 28px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-main-container {
+    padding: 56px 0 20px;
+  }
+
+  .footer-inner-content {
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 0 auto 48px;
+    padding: 0 20px;
+    gap: 20px;
+  }
+
+  .footer-brand-section {
+    width: 180px;
+    flex-shrink: 0;
+  }
+
+  .footer-menu-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .footer-menu-col {
+    min-width: 0;
+  }
+
+  .footer-menu-title {
+    margin-bottom: 16px;
+    font-size: 15px;
+  }
+
+  .footer-menu-list li {
+    margin-bottom: 12px;
+  }
+
+  .footer-link {
+    font-size: 13px;
+  }
+
+  .footer-bottom-bar {
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px 0;
+  }
+
+  .footer-legal-links {
+    gap: 20px;
+  }
+
+  .modal-fixed-content {
+    width: calc(100vw - 32px);
+    max-height: 78vh;
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-inner-content {
+    padding: 0 14px;
+    gap: 14px;
+  }
+
+  .footer-logo-text {
+    font-size: 16px;
+  }
+
+  .footer-brand-desc {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .footer-menu-wrapper {
+    gap: 10px;
+  }
+
+  .footer-menu-title {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .footer-link {
+    font-size: 12px;
+  }
+
+  .footer-bottom-bar {
+    padding: 20px 14px 0;
+    align-items: flex-start;
+  }
+
+  .footer-copyright {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .footer-legal-links {
+    gap: 14px;
+  }
+
+  .footer-legal-item {
+    font-size: 12px;
+  }
+
+  .modal-fixed-overlay {
+    padding: 16px;
+  }
+
+  .modal-fixed-header {
+    align-items: flex-start;
+  }
+
+  .modal-fixed-header h3 {
+    font-size: 18px;
+  }
+
+  .modal-fixed-body {
+    font-size: 14px;
+    line-height: 1.7;
+  }
 }

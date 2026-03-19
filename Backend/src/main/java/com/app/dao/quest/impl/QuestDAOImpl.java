@@ -1,6 +1,7 @@
 package com.app.dao.quest.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +11,36 @@ import com.app.dao.quest.QuestDAO;
 import com.app.dto.quest.QuestDTO;
 
 @Repository
-public class QuestDAOImpl implements QuestDAO {
+public class QuestDAOImpl implements QuestDAO{
 
-    @Autowired
-    private SqlSessionTemplate sqlSessionTemplate;
+	@Autowired
+	SqlSessionTemplate sqlSessionTemplate;
+	
+	// 매퍼 파일의 namespace와 일치해야 합니다.
+    private static final String NAMESPACE = "quest_mapper";
 
     @Override
-    public List<QuestDTO> findAll() {
-        return sqlSessionTemplate.selectList("quest_mapper.findAll");
+    public List<QuestDTO> selectAllQuests() {
+        return sqlSessionTemplate.selectList(NAMESPACE + ".selectAllQuests");
     }
 
     @Override
-    public QuestDTO findById(int questId) {
-        return sqlSessionTemplate.selectOne("quest_mapper.findById", questId);
+    public QuestDTO selectQuestById(int questId) {
+        return sqlSessionTemplate.selectOne(NAMESPACE + ".selectQuestById", questId);
     }
 
     @Override
-    public int saveQuest(QuestDTO quest) {
-        int result = sqlSessionTemplate.insert("quest_mapper.saveQuest", quest);
-        return result;
+    public int insertQuest(QuestDTO quest) {
+        return sqlSessionTemplate.insert(NAMESPACE + ".insertQuest", quest);
+    }
+
+    @Override
+    public int updateQuest(QuestDTO quest) {
+        return sqlSessionTemplate.update(NAMESPACE + ".updateQuest", quest);
+    }
+
+    @Override
+    public int updateQuestStatus(Map<String, Object> params) {
+        return sqlSessionTemplate.update(NAMESPACE + ".updateQuestStatus", params);
     }
 }

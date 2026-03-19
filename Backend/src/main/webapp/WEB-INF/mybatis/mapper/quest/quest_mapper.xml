@@ -4,54 +4,40 @@
 		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="quest_mapper">
-	<select id="findAll" resultType="QuestDTO">
-		SELECT
-			quest_id,
-			title,
-			description,
-			category,
-			reward_exp,
-			reward_point,
-			status,
-			created_at
-		FROM LQ_QUEST
-		WHERE status != 'DELETED'
-		ORDER BY quest_id DESC
-	</select>
 
-	<select id="findById" parameterType="int" resultType="QuestDTO">
-		SELECT
-			quest_id,
-			title,
-			description,
-			category,
-			reward_exp,
-			reward_point,
-			status,
-			created_at
-		FROM LQ_QUEST
-		WHERE quest_id = #{questId}
-		AND status != 'DELETED'
-	</select>
+	<select id="selectAllQuests" resultType="Quest">
+        SELECT 
+            QUEST_ID as questId,
+            TITLE, DESCRIPTION, CATEGORY,
+            REWARD_EXP as rewardExp,
+            REWARD_POINT as rewardPoint,
+            STATUS, CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE STATUS != 'DELETED'
+        ORDER BY QUEST_ID DESC
+    </select>
 
-	<insert id="saveQuest" parameterType="QuestDTO">
-		INSERT INTO LQ_QUEST (
-		quest_id,
-		title,
-		description,
-		category,
-		reward_exp,
-		reward_point,
-		status,
-		created_at
-		) VALUES (
-		SEQ_LQ_QUEST_PK.nextval,
-		#{title},
-		#{description},
-		#{category},
-		#{rewardExp},
-		#{rewardPoint},
-		#{status},
-		sysdate )
-	</insert>
+    <select id="selectQuestById" parameterType="int" resultType="Quest">
+        SELECT 
+            QUEST_ID as questId, TITLE, DESCRIPTION, CATEGORY,
+            REWARD_EXP as rewardExp, REWARD_POINT as rewardPoint,
+            STATUS, CREATED_AT as createdAt
+        FROM LQ_QUEST
+        WHERE QUEST_ID = #{questId}
+    </select>
+
+    <insert id="insertQuest" parameterType="Quest">
+        INSERT INTO LQ_QUEST (
+            QUEST_ID, TITLE, DESCRIPTION, CATEGORY, REWARD_EXP, REWARD_POINT
+        ) VALUES (
+            SEQ_QUEST_PK.NEXTVAL, #{title}, #{description}, #{category}, #{rewardExp}, #{rewardPoint}
+        )
+    </insert>
+
+    <update id="updateQuestStatus" parameterType="map">
+        UPDATE LQ_QUEST 
+        SET STATUS = #{status}
+        WHERE QUEST_ID = #{questId}
+    </update>
+    
 </mapper>

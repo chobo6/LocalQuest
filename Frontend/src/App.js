@@ -1,11 +1,10 @@
-import './App.css';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/auth/login/Login';
-import SignUp from './pages/auth/signup/SignUp';
-import Terms from './pages/auth/signup/Terms';
-import QuestList from './pages/quest/QuestList/QuestList';
-import MyQuest from './pages/quest/MyQuest/MyQuest';
-import QuestDetail from './pages/quest/QuestDetail/QuestDetail';
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
+import CustomerService from './pages/support/CustomerService';
+import MainPage from './pages/main/MainPage';
+import './App.css';
 
 function App() {
   return (
