@@ -7,7 +7,7 @@
 	<select id="findRankList" resultType="Rank">
 		SELECT
 			UR.RANK_ID,
-			UR.NICKNAME,
+			U.NICKNAME,
 			UR.TOTAL_EXP,
 			ROW_NUMBER() OVER (ORDER BY UR.TOTAL_EXP DESC, UR.RANK_ID ASC) AS RANKING,
 			NVL(
@@ -22,6 +22,8 @@
 				FLOOR(UR.TOTAL_EXP / 500) + 1
 			) AS LEVEL_NO
 		FROM LQ_USER_RANK UR
+		INNER JOIN LQ_USER U
+			ON U.USER_ID = UR.USER_ID
 		ORDER BY RANKING ASC
 	</select>
 </mapper>
