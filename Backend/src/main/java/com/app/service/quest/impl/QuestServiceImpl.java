@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.app.dao.quest.QuestDAO;
 import com.app.dto.quest.QuestDTO;
 import com.app.dto.quest.QuestDetailDTO;
+import com.app.dto.quest.QuestMapDTO;
 import com.app.service.quest.QuestService;
 
 @Service
@@ -21,6 +22,11 @@ public class QuestServiceImpl implements QuestService {
     @Override
     public List<QuestDTO> getAllQuests() {
         return questDAO.selectAllQuests();
+    }
+
+    @Override
+    public List<QuestMapDTO> getQuestMapList() {
+        return questDAO.selectQuestMapList();
     }
 
     @Override

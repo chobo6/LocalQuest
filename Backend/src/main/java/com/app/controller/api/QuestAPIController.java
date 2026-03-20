@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.quest.QuestDTO;
 import com.app.dto.quest.QuestDetailDTO;
+import com.app.dto.quest.QuestMapDTO;
 import com.app.service.quest.QuestService;
 
 @RestController
@@ -23,6 +24,11 @@ public class QuestAPIController {
     @GetMapping
     public ResponseEntity<List<QuestDTO>> getQuestList() {
         return ResponseEntity.ok(questService.getAllQuests());
+    }
+
+    @GetMapping("/map")
+    public ResponseEntity<List<QuestMapDTO>> getQuestMapList() {
+        return ResponseEntity.ok(questService.getQuestMapList());
     }
 
     @GetMapping("/{questId}")
