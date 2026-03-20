@@ -163,6 +163,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", "소셜 로그인 인증이 취소되었거나 실패했습니다.")
 				.build()
+				.encode()
 				.toUriString();
 
 			HttpHeaders headers = new HttpHeaders();
@@ -175,6 +176,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", "소셜 로그인 인가 코드가 누락되었습니다.")
 				.build()
+				.encode()
 				.toUriString();
 
 			HttpHeaders headers = new HttpHeaders();
@@ -184,17 +186,7 @@ public class UserAPIController {
 
 		try {
 			LoginResponse response = userService.loginWithSocialCode(provider, code, state);
-			String redirectUrl = UriComponentsBuilder
-				.fromUriString(frontendRedirect)
-				.queryParam("accessToken", response.getAccessToken())
-				.queryParam("expiresIn", response.getExpiresIn())
-				.queryParam("userId", response.getUserId())
-				.queryParam("userLoginId", response.getUserLoginId())
-				.queryParam("name", response.getName())
-				.queryParam("nickname", response.getNickname())
-				.queryParam("role", response.getRole())
-				.build()
-				.toUriString();
+			String redirectUrl = buildSocialSuccessRedirectUrl(frontendRedirect, response);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
@@ -204,6 +196,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", e.getMessage())
 				.build()
+				.encode()
 				.toUriString();
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
@@ -213,10 +206,32 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", e.getMessage())
 				.build()
+				.encode()
 				.toUriString();
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
 			return new ResponseEntity<>(headers, HttpStatus.FOUND);
 		}
+	}
+
+	private String buildSocialSuccessRedirectUrl(String frontendRedirect, LoginResponse response) {
+		String fragment = UriComponentsBuilder
+			.newInstance()
+			.queryParam("accessToken", response.getAccessToken())
+			.queryParam("expiresIn", response.getExpiresIn())
+			.queryParam("userId", response.getUserId())
+			.queryParam("userLoginId", response.getUserLoginId())
+			.queryParam("name", response.getName())
+			.queryParam("nickname", response.getNickname())
+			.queryParam("role", response.getRole())
+			.build()
+			.encode()
+			.getQuery();
+
+		if (fragment == null || fragment.trim().isEmpty()) {
+			return frontendRedirect;
+		}
+
+		return frontendRedirect + "#" + fragment;
 	}
 }

@@ -67,13 +67,11 @@ public class UserDAOImpl implements UserDAO {
 		return sqlSessionTemplate.update("user_mapper.updatePasswordByUserId", user);
 	}
 
-    @Override
-    public List<User> selectAllUsers() {
-        return sqlSessionTemplate.selectList("user_mapper.selectAllUsers");
-    }
-    
+	@Override
+	public int updateSocialProfileByUserId(User user) {
+		return sqlSessionTemplate.update("user_mapper.updateSocialProfileByUserId", user);
+	}
 
-    
     @Override
     public int updateUserRole(Map<String, Object> roleMap) {
         return sqlSessionTemplate.update("user_mapper.updateUserRole", roleMap);
