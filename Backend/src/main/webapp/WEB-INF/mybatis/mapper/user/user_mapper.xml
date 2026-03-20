@@ -105,4 +105,104 @@
 		#{status},
 		sysdate )
 	</insert>
+
+	<select id="countByUserLoginId" parameterType="string" resultType="int">
+		SELECT COUNT(1)
+		FROM LQ_USER
+		WHERE user_login_id = #{value}
+	</select>
+
+	<select id="countByNickname" parameterType="string" resultType="int">
+		SELECT COUNT(1)
+		FROM LQ_USER
+		WHERE nickname = #{value}
+	</select>
+
+	<select id="countByEmail" parameterType="string" resultType="int">
+		SELECT COUNT(1)
+		FROM LQ_USER
+		WHERE email = #{value}
+	</select>
+
+	<select id="findByUserLoginId" parameterType="string" resultType="User">
+		SELECT
+			user_id,
+			user_login_id,
+			name,
+			email,
+			password,
+			nickname,
+			birth,
+			gender,
+			role,
+			exp,
+			point,
+			status
+		FROM LQ_USER
+		WHERE user_login_id = #{value}
+	</select>
+
+	<select id="findByEmail" parameterType="string" resultType="User">
+		SELECT
+			user_id,
+			user_login_id,
+			name,
+			email,
+			password,
+			nickname,
+			birth,
+			gender,
+			role,
+			exp,
+			point,
+			status
+		FROM LQ_USER
+		WHERE email = #{value}
+	</select>
+
+	<select id="findActiveUserByNameAndEmail" parameterType="User" resultType="User">
+		SELECT
+			user_id,
+			user_login_id,
+			name,
+			email,
+			password,
+			nickname,
+			birth,
+			gender,
+			role,
+			exp,
+			point,
+			status
+		FROM LQ_USER
+		WHERE name = #{name}
+		  AND email = #{email}
+		  AND status = 'ACTIVE'
+	</select>
+
+	<select id="findActiveUserByUserLoginIdAndEmail" parameterType="User" resultType="User">
+		SELECT
+			user_id,
+			user_login_id,
+			name,
+			email,
+			password,
+			nickname,
+			birth,
+			gender,
+			role,
+			exp,
+			point,
+			status
+		FROM LQ_USER
+		WHERE user_login_id = #{userLoginId}
+		  AND email = #{email}
+		  AND status = 'ACTIVE'
+	</select>
+
+	<update id="updatePasswordByUserId" parameterType="User">
+		UPDATE LQ_USER
+		SET password = #{password}
+		WHERE user_id = #{userId}
+	</update>
 </mapper>

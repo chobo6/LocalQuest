@@ -2,12 +2,25 @@ package com.app.service.user;
 
 import java.util.List;
 
+import com.app.dto.user.FindPasswordRequest;
+import com.app.dto.user.FindUserIdRequest;
+import com.app.dto.user.LoginRequest;
+import com.app.dto.user.LoginResponse;
 import com.app.dto.user.SignUpRequest;
 import com.app.dto.user.User;
 
 public interface UserService {
 	
 	public int signUp(SignUpRequest request);
+	public boolean isUserIdAvailable(String userLoginId);
+	public boolean isNicknameAvailable(String nickname);
+	public boolean isEmailAvailable(String email);
+	public LoginResponse login(LoginRequest request);
+	public String getSocialAuthorizationUrl(String provider);
+	public LoginResponse loginWithSocialCode(String provider, String code, String state);
+	public String getSocialFrontendRedirectUri();
+	public String findUserLoginId(FindUserIdRequest request);
+	public void sendTemporaryPasswordByEmail(FindPasswordRequest request);
 	
 	// 1. 전체 회원 목록 가져오기
     public List<User> getAllUsers();

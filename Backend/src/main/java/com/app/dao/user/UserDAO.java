@@ -8,6 +8,14 @@ import com.app.dto.user.User;
 public interface UserDAO {
 	
 	public int saveUser(User user);
+	public int countByUserLoginId(String userLoginId);
+	public int countByNickname(String nickname);
+	public int countByEmail(String email);
+	public User findByUserLoginId(String userLoginId);
+	public User findByEmail(String email);
+	public User findActiveUserByNameAndEmail(User user);
+	public User findActiveUserByUserLoginIdAndEmail(User user);
+	public int updatePasswordByUserId(User user);
 	
 	// 1. 전체 회원 목록 조회
     public List<User> selectAllUsers();

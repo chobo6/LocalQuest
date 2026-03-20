@@ -13,6 +13,7 @@ public class QuestDTO {
     private String category;     // CATEGORY
     private int rewardExp;       // REWARD_EXP
     private int rewardPoint;     // REWARD_POINT
+    private Integer timeLimit;   // TIME_LIMIT
     private String status;       // STATUS (ACTIVE, INACTIVE, DELETED)
     private Date createdAt;      // CREATED_AT
     

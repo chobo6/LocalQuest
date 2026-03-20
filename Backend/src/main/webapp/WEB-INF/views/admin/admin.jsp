@@ -155,6 +155,168 @@
                 }
             });
         }
+        
+
+        /**
+         * [기존 함수 보완] 등록/수정 통합 제출
+         */
+        function submitQuest() {
+            const form = $('#questForm')[0];
+            const questId = $('#modalQuestId').val();
+            
+            // 수정인지 등록인지에 따라 URL 분기 (또는 하나의 URL에서 처리 가능)
+            const url = (questId === "0") ? ctx + "/admin/quests/register" : ctx + "/admin/quests/update";
+            
+            const formData = $(form).serialize();
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.trim() === "success") {
+                        alert(questId === "0" ? "등록되었습니다." : "수정되었습니다.");
+                        closeQuestModal();
+                        loadAdminContent(ctx + "/admin/quests");
+                    } else {
+                        alert("처리에 실패했습니다.");
+                    }
+                }
+            });
+        }
+
+        /* --- admin.jsp 스크립트 영역 수정 --- */
+
+        /**
+         * [추가/수정] 새 퀘스트 모달 열기
+         * (수정 모드였다가 다시 '새 등록'을 누를 때를 대비해 초기화 로직 추가)
+         */
+        function openQuestModal() {
+            $('#modalQuestId').val("0"); // PK 초기화
+            $('#questForm')[0].reset();  // 폼 초기화
+            $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-plus-circle"></i> 새 퀘스트 등록');
+            $('#modalSubmitBtn').text('등록하기');
+            $('#questModal').fadeIn(200);
+        }
+
+        /**
+         * 수정 모달 열기 (기존 값 채우기)
+         */
+        function editQuestModal(data) {
+            // 1. 모달 텍스트 및 버튼 변경
+            $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-edit"></i> 퀘스트 수정');
+            $('#modalSubmitBtn').text('수정하기');
+            
+            // 2. 데이터 채우기 (admin-quest.jsp에 설정한 m_ ID들과 맞춤)
+            $('#modalQuestId').val(data.id); 
+            $('#m_title').val(data.title);
+            $('#m_category').val(data.category);
+            $('#m_exp').val(data.exp);
+            $('#m_point').val(data.point);
+            $('#m_desc').val(data.desc);
+            
+            // 3. 모달 열기
+            $('#questModal').fadeIn(200);
+        }
+
+        /**
+         * 모달 닫을 때 초기화 (이미 작성하신 코드 유지하되, 리셋 확인)
+         */
+        function closeQuestModal() {
+            $('#questModal').fadeOut(200);
+            setTimeout(function() { // 애니메이션 끝난 후 리셋 (시각적 깔끔함)
+                $('#questForm')[0].reset();
+                $('#modalQuestId').val("0");
+                $('#questModal .adm-q-modal-header h3').html('<i class="fas fa-plus-circle"></i> 새 퀘스트 등록');
+                $('#modalSubmitBtn').text('등록하기');
+            }, 200);
+        }
+        
+        /**
+         * 퀘스트 검색 및 필터링
+         */
+        function searchQuest() {
+            const status = $('#filterStatus').val(); // 활성/비활성 선택값
+            const keyword = $('#searchQuestName').val(); // 검색어
+            
+            // URL 파라미터 조합
+            const url = ctx + "/admin/quests?status=" + status + "&keyword=" + encodeURIComponent(keyword);
+            
+            // 기존에 만드신 콘텐츠 로더 함수 호출
+            loadAdminContent(url);
+        }
+        
+        /* --- Reward Item 관련 JS --- */
+
+        function searchItem() {
+            const status = $('#filterItemStatus').val();
+            const keyword = $('#searchItemName').val();
+            loadAdminContent(ctx + "/admin/shop?status=" + status + "&keyword=" + encodeURIComponent(keyword));
+        }
+
+        function openItemModal() {
+            $('#modalItemId').val("0");
+            $('#itemForm')[0].reset();
+            $('#itemModalTitleText').html('<i class="fas fa-plus-circle"></i> 새 리워드 등록');
+            $('#itemSubmitBtn').text('등록하기');
+            $('#itemModal').fadeIn(200);
+        }
+
+        function editItemModal(data) {
+            $('#itemModalTitleText').html('<i class="fas fa-edit"></i> 아이템 정보 수정');
+            $('#itemSubmitBtn').text('수정하기');
+            
+            $('#modalItemId').val(data.id);
+            $('#i_name').val(data.name);
+            $('#i_price').val(data.price);
+            $('#i_stock').val(data.stock);
+            $('#i_status').val(data.status);
+            $('#i_desc').val(data.desc);
+            
+            $('#itemModal').fadeIn(200);
+        }
+
+        function submitItem() {
+            const formData = $('#itemForm').serialize();
+            $.ajax({
+                url: ctx + "/admin/shop/save",
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.trim() === "success") {
+                        alert("저장되었습니다.");
+                        closeItemModal();
+                        loadAdminContent(ctx + "/admin/shop");
+                    } else { alert("실패했습니다."); }
+                }
+            });
+        }
+
+        function updateItemStatus(itemId, status) {
+            if(!confirm("아이템 상태를 변경하시겠습니까?")) return;
+            $.ajax({
+                url: ctx + "/admin/shop/updateStatus",
+                type: "POST",
+                data: { itemId: itemId, status: status },
+                success: function(res) {
+                    if(res.trim() === "success") {
+                        loadAdminContent(ctx + "/admin/shop");
+                    }
+                }
+            });
+        }
+
+        function closeItemModal() {
+            $('#itemModal').fadeOut(200);
+            // 애니메이션이 끝난 후 데이터를 깨끗하게 비워줍니다.
+            setTimeout(function() {
+                $('#itemForm')[0].reset();
+                $('#modalItemId').val("0");
+                $('#itemModalTitleText').html('<i class="fas fa-plus-circle"></i> 새 리워드 등록');
+                $('#itemSubmitBtn').text('등록하기');
+            }, 200);
+        }
+        
     </script>
 </head>
 <body>

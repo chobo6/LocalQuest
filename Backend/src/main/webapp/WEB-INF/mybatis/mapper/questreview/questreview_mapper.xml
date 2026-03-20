@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC
+		   "-//mybatis.org//DTD Mapper 3.0//EN" 
+		   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="questreview_mapper">
+	<insert id="saveQuestReview" parameterType="QuestReviewDTO">
+		INSERT INTO LQ_QUEST_REVIEW (
+		review_id,
+		user_id,
+		quest_id,
+		rating,
+		content,
+		created_at
+		) VALUES (
+		SEQ_LQ_QUEST_REVIEW_PK.nextval,
+		#{userId},
+		#{questId},
+		#{rating},
+		#{content},
+		sysdate )
+	</insert>
+</mapper>

@@ -76,3 +76,13 @@
 .lq-button.naver:hover {
     background-color: #02b350;
 }
+
+/* 카카오 브랜드 컬러 */
+.lq-button.kakao {
+    background-color: #FEE500;
+    color: #191919;
+    border: 1px solid #f3da00;
+}
+.lq-button.kakao:hover {
+    background-color: #f2da00;
+}
