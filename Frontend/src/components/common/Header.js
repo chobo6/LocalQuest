@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearAuth } from '../../store/authSlice';
+import { buildBackendUrl } from '../../config/runtimeUrls';
 import LocalQuestLogo from './LocalQuestLogo';
 import './Header.css';
 
@@ -10,6 +11,7 @@ const Header = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
+  const adminPageUrl = buildBackendUrl('/admin');
 
   const userRole = user?.role ?? 'GUEST';
   const displayName =
@@ -68,7 +70,7 @@ const Header = () => {
 
               {userRole === 'ADMIN' && (
                 <li className="header-nav-item">
-                  <Link to="/admin" className="header-nav-link">관리자 페이지</Link>
+                  <a href={adminPageUrl} className="header-nav-link">관리자 페이지</a>
                 </li>
               )}
 

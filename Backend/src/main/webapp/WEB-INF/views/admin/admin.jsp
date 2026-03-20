@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -320,6 +321,18 @@
     </script>
 </head>
 <body>
+    <c:set var="frontendBaseUrl" value="${initParam['lq.frontend.base-url']}" />
+    <c:if test="${empty frontendBaseUrl}">
+        <c:set var="frontendPortSuffix" value=":${pageContext.request.serverPort}" />
+        <c:if test="${pageContext.request.serverPort == 80 or pageContext.request.serverPort == 443}">
+            <c:set var="frontendPortSuffix" value="" />
+        </c:if>
+        <c:if test="${pageContext.request.serverPort == 8080}">
+            <c:set var="frontendPortSuffix" value=":3000" />
+        </c:if>
+        <c:set var="frontendBaseUrl" value="${pageContext.request.scheme}://${pageContext.request.serverName}${frontendPortSuffix}" />
+    </c:if>
+    <c:set var="logoHref" value="${frontendBaseUrl}/main" scope="request" />
     <div id="admin-root">
         <jsp:include page="../common/header.jsp" />
         <div class="header-relative-space"></div>
