@@ -1,0 +1,262 @@
+/* Login.css */
+
+/* 화면 전체 중앙 정렬 */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+    font-family: 'Arial', sans-serif;
+}
+
+/* 로그인 카드 (Input과 Button을 감싸는 컨테이너) */
+.login-form {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+/* 페이지 제목 */
+.login-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.login-logo-link {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 아이디 저장 체크박스 영역 */
+.login-options {
+    margin-bottom: 20px;
+}
+
+.remember-login-id {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+}
+
+.remember-login-id input {
+    margin-right: 8px;
+}
+
+/* 하단 링크 메뉴 (아이디/비밀번호 찾기, 회원가입) */
+.login-find {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.login-find button {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none; /* 밑줄 제거 (취향에 따라 선택) */
+    transition: color 0.2s;
+}
+
+.login-find button:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.find-id-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1200;
+}
+
+.find-id-modal {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 26px 22px 22px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.find-id-modal h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #111827;
+}
+
+.find-id-guide {
+    margin: 10px 0 18px;
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.find-id-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.find-id-error {
+    margin: 0;
+    font-size: 13px;
+    color: #dc2626;
+}
+
+.find-id-result {
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #111827;
+    font-size: 14px;
+}
+
+.find-id-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.find-id-cancel-btn {
+    flex: 1;
+    min-height: 46px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.find-id-cancel-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.find-id-next-btn {
+    flex: 1;
+    width: auto;
+    min-height: 46px;
+}
+
+.find-password-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1200;
+}
+
+.find-password-modal {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 26px 22px 22px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.find-password-modal h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #111827;
+}
+
+.find-password-guide {
+    margin: 10px 0 18px;
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.find-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.find-password-error {
+    margin: 0;
+    font-size: 13px;
+    color: #dc2626;
+}
+
+.find-password-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.find-password-cancel-btn {
+    flex: 1;
+    min-height: 46px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.find-password-cancel-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.find-password-next-btn {
+    flex: 1;
+    width: auto;
+    min-height: 46px;
+}
+
+/* 소셜 로그인 섹션 */
+.social-login {
+    margin-top: 30px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.social-login p {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+/* 소셜 로그인 양옆에 선 긋기 (디자인 요소) */
+.social-login p::before,
+.social-login p::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+    margin: 0 10px;
+}

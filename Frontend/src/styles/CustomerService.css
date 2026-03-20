@@ -1,0 +1,274 @@
+﻿.cs-main-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px 100px;
+}
+
+.cs-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.cs-tab-menu {
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 40px;
+}
+
+.cs-tab-menu button {
+  padding: 15px 40px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  position: relative;
+}
+
+.cs-tab-menu button.active {
+  color: #D93D5E;
+}
+
+.cs-tab-menu button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #D93D5E;
+}
+
+.tab-panel {
+  padding: 40px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  min-height: 300px;
+}
+
+.notice-accordion {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.notice-item {
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.notice-item.open {
+  border-color: #D93D5E;
+  box-shadow: 0 8px 18px rgba(217, 61, 94, 0.08);
+}
+
+.notice-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.notice-question-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notice-question-text strong {
+  font-size: 17px;
+  color: #222;
+}
+
+.notice-question-text span {
+  font-size: 14px;
+  color: #888;
+}
+
+.notice-icon {
+  margin-left: 20px;
+  font-size: 24px;
+  font-weight: 400;
+  color: #D93D5E;
+}
+
+.notice-answer {
+  padding: 0 24px 20px;
+  border-top: 1px solid #f1f1f1;
+  background: #fffafc;
+}
+
+.notice-answer p {
+  margin: 16px 0 0;
+  line-height: 1.7;
+  color: #555;
+}
+
+.faq-accordion {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.faq-item {
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.faq-item.open {
+  border-color: #D93D5E;
+  box-shadow: 0 8px 18px rgba(217, 61, 94, 0.08);
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border: none;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faq-icon {
+  margin-left: 20px;
+  font-size: 24px;
+  font-weight: 400;
+  color: #D93D5E;
+}
+
+.faq-answer {
+  padding: 0 24px 20px;
+  border-top: 1px solid #f1f1f1;
+  background: #fffafc;
+}
+
+.faq-answer p {
+  margin: 16px 0 0;
+  line-height: 1.7;
+  color: #555;
+}
+
+.inquiry-section {
+  margin-top: 28px;
+}
+
+.inquiry-user-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: #fff4f7;
+  border: 1px solid #ffd5df;
+}
+
+.inquiry-user-box strong {
+  color: #222;
+}
+
+.inquiry-user-box span {
+  color: #777;
+  font-size: 14px;
+}
+
+.inquiry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inquiry-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.inquiry-input,
+.inquiry-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.inquiry-textarea {
+  min-height: 180px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.inquiry-input:focus,
+.inquiry-textarea:focus {
+  outline: none;
+  border-color: #D93D5E;
+  box-shadow: 0 0 0 3px rgba(217, 61, 94, 0.12);
+}
+
+.inquiry-submit-btn,
+.inquiry-login-btn {
+  align-self: flex-start;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #D93D5E;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inquiry-preview-box {
+  margin-top: 24px;
+  padding: 20px 22px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #ececec;
+}
+
+.inquiry-preview-box h4 {
+  margin: 0 0 12px;
+  color: #D93D5E;
+}
+
+.inquiry-preview-box p {
+  margin: 8px 0;
+  color: #444;
+  line-height: 1.6;
+}
+
+.inquiry-login-guide {
+  margin-top: 28px;
+  padding: 28px 24px;
+  text-align: center;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #ececec;
+}
+
+.inquiry-login-guide p {
+  margin: 0 0 16px;
+  color: #555;
+}
