@@ -23,8 +23,6 @@ public interface UserService {
 	public void sendTemporaryPasswordByEmail(FindPasswordRequest request);
 	
 	// 1. 전체 회원 목록 가져오기
-    public List<User> getAllUsers();
-
     // 2. 조건별 회원 검색하기 (아이디/닉네임 등)
     List<User> searchUsers(String type, String keyword, String sort);
     

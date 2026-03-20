@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearAuth } from '../../store/authSlice';
+import { userApi } from '../../api/UserApi';
 import { buildBackendUrl } from '../../config/runtimeUrls';
 import LocalQuestLogo from './LocalQuestLogo';
 import './Header.css';
@@ -17,9 +18,15 @@ const Header = () => {
   const displayName =
     user?.nickname ?? user?.name ?? user?.userLoginId ?? user?.userId ?? '사용자';
 
-  const handleLogout = () => {
-    dispatch(clearAuth());
-    navigate('/main', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await userApi.logout();
+    } catch (error) {
+      // Ignore logout API failure and clear client auth state anyway.
+    } finally {
+      dispatch(clearAuth());
+      navigate('/main', { replace: true });
+    }
   };
 
   return (

@@ -36,6 +36,10 @@ function AppRoutes({ isAuthenticated }) {
         <Route path="/explore" element={<QuestList />} />
         <Route path="/explore/:questId" element={<QuestDetail />} />
         <Route path="/quest" element={<MyQuest />} />
+        <Route
+          path="/mypage"
+          element={isAuthenticated ? <MyQuest /> : <Navigate to="/login" replace />}
+        />
         <Route path="/reward" element={<RewardPage />} />
         <Route
           path="/"
