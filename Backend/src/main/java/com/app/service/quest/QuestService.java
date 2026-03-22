@@ -5,9 +5,12 @@ import java.util.Map;
 
 import com.app.dto.quest.QuestDTO;
 import com.app.dto.quest.QuestDetailDTO;
+import com.app.dto.quest.QuestMapDTO;
 
 public interface QuestService {
     List<QuestDTO> getAllQuests();
+
+    List<QuestMapDTO> getQuestMapList();
 
     QuestDTO getQuestById(int questId);
 

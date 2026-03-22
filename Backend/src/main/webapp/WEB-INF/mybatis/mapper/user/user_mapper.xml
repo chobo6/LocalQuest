@@ -6,22 +6,6 @@
 <mapper namespace="user_mapper">
 
 	<!-- 관리자_회원정보 조회 -->
-	<select id="selectAllUsers" resultType="User">
-		SELECT
-		USER_ID as userId,
-		USER_LOGIN_ID as userLoginId,
-		NAME,
-		EMAIL,
-		NICKNAME,
-		ROLE,
-		EXP,
-		POINT,
-		STATUS,
-		CREATED_AT as createdAt
-		FROM LQ_USER
-		ORDER BY CREATED_AT DESC
-	</select>
-
 	<!-- 관리자_회원정보 검색 -->
 	<select id="searchUser" resultType="User">
 		SELECT
@@ -203,6 +187,14 @@
 	<update id="updatePasswordByUserId" parameterType="User">
 		UPDATE LQ_USER
 		SET password = #{password}
+		WHERE user_id = #{userId}
+	</update>
+
+	<update id="updateSocialProfileByUserId" parameterType="User">
+		UPDATE LQ_USER
+		SET
+			birth = #{birth},
+			gender = #{gender}
 		WHERE user_id = #{userId}
 	</update>
 </mapper>

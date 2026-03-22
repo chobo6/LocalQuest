@@ -2,6 +2,9 @@ package com.app.controller.api;
 
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.app.auth.SessionAuthKeys;
 import com.app.dto.user.FindPasswordRequest;
 import com.app.dto.user.FindUserIdRequest;
 import com.app.dto.user.LoginRequest;
@@ -81,7 +85,7 @@ public class UserAPIController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpServletRequest) {
 		String validationMessage = userValidator.validateLoginFields(request);
 		if (validationMessage != null) {
 			return ResponseEntity.badRequest().body(validationMessage);
@@ -93,7 +97,17 @@ public class UserAPIController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 올바르지 않습니다.");
 		}
 
+		storeLoginSession(httpServletRequest, response);
 		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
+		return ResponseEntity.ok(Collections.singletonMap("message", "logged out"));
 	}
 
 	@PostMapping("/find-id")
@@ -154,7 +168,8 @@ public class UserAPIController {
 		@PathVariable String provider,
 		@RequestParam(required = false) String code,
 		@RequestParam(required = false) String state,
-		@RequestParam(required = false) String error
+		@RequestParam(required = false) String error,
+		HttpServletRequest httpServletRequest
 	) {
 		String frontendRedirect = userService.getSocialFrontendRedirectUri();
 
@@ -163,6 +178,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", "소셜 로그인 인증이 취소되었거나 실패했습니다.")
 				.build()
+				.encode()
 				.toUriString();
 
 			HttpHeaders headers = new HttpHeaders();
@@ -175,6 +191,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", "소셜 로그인 인가 코드가 누락되었습니다.")
 				.build()
+				.encode()
 				.toUriString();
 
 			HttpHeaders headers = new HttpHeaders();
@@ -184,17 +201,8 @@ public class UserAPIController {
 
 		try {
 			LoginResponse response = userService.loginWithSocialCode(provider, code, state);
-			String redirectUrl = UriComponentsBuilder
-				.fromUriString(frontendRedirect)
-				.queryParam("accessToken", response.getAccessToken())
-				.queryParam("expiresIn", response.getExpiresIn())
-				.queryParam("userId", response.getUserId())
-				.queryParam("userLoginId", response.getUserLoginId())
-				.queryParam("name", response.getName())
-				.queryParam("nickname", response.getNickname())
-				.queryParam("role", response.getRole())
-				.build()
-				.toUriString();
+			storeLoginSession(httpServletRequest, response);
+			String redirectUrl = buildSocialSuccessRedirectUrl(frontendRedirect, response);
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
@@ -204,6 +212,7 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", e.getMessage())
 				.build()
+				.encode()
 				.toUriString();
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
@@ -213,10 +222,39 @@ public class UserAPIController {
 				.fromUriString(frontendRedirect)
 				.queryParam("error", e.getMessage())
 				.build()
+				.encode()
 				.toUriString();
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.LOCATION, redirectUrl);
 			return new ResponseEntity<>(headers, HttpStatus.FOUND);
 		}
+	}
+
+	private void storeLoginSession(HttpServletRequest request, LoginResponse response) {
+		HttpSession session = request.getSession(true);
+		session.setAttribute(SessionAuthKeys.USER_ID, response.getUserId());
+		session.setAttribute(SessionAuthKeys.USER_LOGIN_ID, response.getUserLoginId());
+		session.setAttribute(SessionAuthKeys.USER_ROLE, response.getRole());
+	}
+
+	private String buildSocialSuccessRedirectUrl(String frontendRedirect, LoginResponse response) {
+		String fragment = UriComponentsBuilder
+			.newInstance()
+			.queryParam("accessToken", response.getAccessToken())
+			.queryParam("expiresIn", response.getExpiresIn())
+			.queryParam("userId", response.getUserId())
+			.queryParam("userLoginId", response.getUserLoginId())
+			.queryParam("name", response.getName())
+			.queryParam("nickname", response.getNickname())
+			.queryParam("role", response.getRole())
+			.build()
+			.encode()
+			.getQuery();
+
+		if (fragment == null || fragment.trim().isEmpty()) {
+			return frontendRedirect;
+		}
+
+		return frontendRedirect + "#" + fragment;
 	}
 }

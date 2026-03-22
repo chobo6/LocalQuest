@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.app.dao.quest.QuestDAO;
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.quest.QuestMapDTO;
 import com.app.dto.quest.QuestLocationInfoDTO;
 
 @Repository
@@ -22,6 +23,11 @@ public class QuestDAOImpl implements QuestDAO {
     @Override
     public List<QuestDTO> selectAllQuests() {
         return sqlSessionTemplate.selectList(NAMESPACE + ".selectAllQuests");
+    }
+
+    @Override
+    public List<QuestMapDTO> selectQuestMapList() {
+        return sqlSessionTemplate.selectList(NAMESPACE + ".selectQuestMapList");
     }
 
     @Override

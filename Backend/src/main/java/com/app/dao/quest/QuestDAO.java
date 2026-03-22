@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.app.dto.quest.QuestDTO;
+import com.app.dto.quest.QuestMapDTO;
 import com.app.dto.quest.QuestLocationInfoDTO;
 
 public interface QuestDAO {
     List<QuestDTO> selectAllQuests();
+
+    List<QuestMapDTO> selectQuestMapList();
 
     QuestDTO selectQuestById(int questId);
 

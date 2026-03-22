@@ -15,6 +15,7 @@ export const userApi = {
     
     // 로그인
     login: (credentials) => api.post('/api/users/login', credentials),
+    logout: () => api.post('/api/users/logout'),
 
     // 아이디 찾기
     findId: (payload) => api.post('/api/users/find-id', payload),
