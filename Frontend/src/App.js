@@ -6,9 +6,11 @@ import SocialLoginCallback from './pages/auth/login/SocialLoginCallback';
 import SignUp from './pages/auth/signup/SignUp';
 import Terms from './pages/auth/signup/Terms';
 import MainPage from './pages/main/MainPage';
+import MyPage from './pages/mypage/MyPage';
 import QuestList from './pages/quest/QuestList/QuestList';
 import QuestDetail from './pages/quest/QuestDetail/QuestDetail';
 import MyQuest from './pages/quest/MyQuest/MyQuest';
+import MyQuestDetail from './pages/quest/MyQuest/MyQuestDetail';
 import RewardPage from './pages/reward/rewardPage';
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
@@ -38,7 +40,11 @@ function AppRoutes({ isAuthenticated }) {
         <Route path="/quest" element={<MyQuest />} />
         <Route
           path="/mypage"
-          element={isAuthenticated ? <MyQuest /> : <Navigate to="/login" replace />}
+          element={isAuthenticated ? <MyPage /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/mypage/:userQuestId"
+          element={isAuthenticated ? <MyQuestDetail /> : <Navigate to="/login" replace />}
         />
         <Route path="/reward" element={<RewardPage />} />
         <Route

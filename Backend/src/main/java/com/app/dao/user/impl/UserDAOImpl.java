@@ -41,6 +41,11 @@ public class UserDAOImpl implements UserDAO {
 		Integer count = sqlSessionTemplate.selectOne("user_mapper.countByEmail", email);
 		return count == null ? 0 : count;
 	}
+	
+	@Override
+	public User findByUserId(int userId) {
+		return sqlSessionTemplate.selectOne("user_mapper.findByUserId", userId);
+	}
 
 	@Override
 	public User findByUserLoginId(String userLoginId) {
@@ -60,6 +65,11 @@ public class UserDAOImpl implements UserDAO {
 	@Override
 	public User findActiveUserByUserLoginIdAndEmail(User user) {
 		return sqlSessionTemplate.selectOne("user_mapper.findActiveUserByUserLoginIdAndEmail", user);
+	}
+
+	@Override
+	public int updateMyProfileByUserId(User user) {
+		return sqlSessionTemplate.update("user_mapper.updateMyProfileByUserId", user);
 	}
 
 	@Override
