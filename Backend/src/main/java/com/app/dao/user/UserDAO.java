@@ -11,10 +11,12 @@ public interface UserDAO {
 	public int countByUserLoginId(String userLoginId);
 	public int countByNickname(String nickname);
 	public int countByEmail(String email);
+	public User findByUserId(int userId);
 	public User findByUserLoginId(String userLoginId);
 	public User findByEmail(String email);
 	public User findActiveUserByNameAndEmail(User user);
 	public User findActiveUserByUserLoginIdAndEmail(User user);
+	public int updateMyProfileByUserId(User user);
 	public int updatePasswordByUserId(User user);
 	public int updateSocialProfileByUserId(User user);
 	
